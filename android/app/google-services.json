@@ -1,0 +1,54 @@
+{
+  "project_info": {
+    "project_number": "554268367169",
+    "project_id": "tasha-36c1e",
+    "storage_bucket": "tasha-36c1e.firebasestorage.app"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:554268367169:android:5e428e86843bf7442369c0",
+        "android_client_info": {
+          "package_name": "com.example.tashaapp"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "554268367169-2c79ctqgpng6a50dlcnvhhh2qg6aee95.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "com.example.tashaapp",
+            "certificate_hash": "e9649d0c0ddf39e8d4122d5f22f8a022d4b78216"
+          }
+        },
+        {
+          "client_id": "554268367169-p6ahttbk67v8jk04u7vao4blsqvsng41.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyBlxnq_XFeRVvCu_PFq4ha5U6A8z6xMfTs"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "554268367169-6lel4l1tkgdk970dsj65ma7i57ak2ode.apps.googleusercontent.com",
+              "client_type": 3
+            },
+            {
+              "client_id": "554268367169-26lcmsvjecpaah435va105nsh08rr9lh.apps.googleusercontent.com",
+              "client_type": 2,
+              "ios_info": {
+                "bundle_id": "com.example.tashaapp"
+              }
+            }
+          ]
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
