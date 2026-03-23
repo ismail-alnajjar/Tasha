@@ -1,19 +1,22 @@
 import 'package:flutter/material.dart';
+import '../localization/app_localizations.dart';
 
-class CitizenFloatingNavBar extends StatefulWidget {
-  const CitizenFloatingNavBar({super.key});
+class CitizenFloatingNavBar extends StatelessWidget {
+  final int selectedIndex;
+  final Function(int) onIndexChanged;
 
-  @override
-  State<CitizenFloatingNavBar> createState() => _CitizenFloatingNavBarState();
-}
-
-class _CitizenFloatingNavBarState extends State<CitizenFloatingNavBar> {
-  int _selectedIndex = 0;
+  const CitizenFloatingNavBar({
+    super.key,
+    required this.selectedIndex,
+    required this.onIndexChanged,
+  });
 
   @override
   Widget build(BuildContext context) {
     const Color primaryColor = Color(0xFF134E4A);
-    const Color accentColor = Color(0xFFF97316);
+    final screenWidth = MediaQuery.sizeOf(context).width;
+
+    final appLocalizations = AppLocalizations.of(context)!;
 
     return Positioned(
       bottom: 24,
@@ -21,7 +24,7 @@ class _CitizenFloatingNavBarState extends State<CitizenFloatingNavBar> {
       right: 0,
       child: Center(
         child: Container(
-          width: 350, // Max width from design
+          width: (screenWidth * 0.9).clamp(300, 400),
           padding: const EdgeInsets.symmetric(horizontal: 24, vertical: 16),
           decoration: BoxDecoration(
             color: primaryColor,
@@ -37,47 +40,59 @@ class _CitizenFloatingNavBarState extends State<CitizenFloatingNavBar> {
           child: Row(
             mainAxisAlignment: MainAxisAlignment.spaceBetween,
             children: [
-              _buildNavItem(0, Icons.home, accentColor),
-              _buildNavItem(1, Icons.explore, accentColor),
-              _buildNavItem(2, Icons.favorite, accentColor),
-              _buildNavItem(3, Icons.person, accentColor),
+              _buildNavItem(0, Icons.home_rounded, appLocalizations.translate('home')),
+              _buildNavItem(1, Icons.explore_rounded, appLocalizations.translate('explore')),
+              _buildNavItem(2, Icons.bookmark_rounded, appLocalizations.translate('saved')),
+              _buildNavItem(3, Icons.person_rounded, appLocalizations.translate('profile')),
             ],
           ),
         ),
       ),
     );
+
   }
 
-  Widget _buildNavItem(int index, IconData icon, Color accentColor) {
-    bool isSelected = _selectedIndex == index;
+  Widget _buildNavItem(int index, IconData icon, String label) {
+    bool isSelected = selectedIndex == index;
+    const Color accentColor = Color(0xFFF97316);
 
     return GestureDetector(
-      onTap: () {
-        setState(() {
-          _selectedIndex = index;
-        });
-        // Handle Navigation Here if needed
-      },
-      child: Column(
-        mainAxisSize: MainAxisSize.min,
-        children: [
-          Icon(
-            icon,
-            color: isSelected ? Colors.white : Colors.white.withOpacity(0.5),
-            size: 28,
-          ),
-          if (isSelected)
-            Container(
-              margin: const EdgeInsets.only(top: 4),
-              width: 4, // size-1 equivalent
-              height: 4,
-              decoration: BoxDecoration(
-                color: accentColor,
-                shape: BoxShape.circle,
+      onTap: () => onIndexChanged(index),
+      behavior: HitTestBehavior.opaque,
+      child: Container(
+        padding: const EdgeInsets.symmetric(horizontal: 12),
+        child: Column(
+          mainAxisSize: MainAxisSize.min,
+          children: [
+            Icon(
+              icon,
+              color: isSelected ? Colors.white : Colors.white.withOpacity(0.5),
+              size: 24,
+            ),
+            const SizedBox(height: 4),
+            Text(
+              label,
+              style: TextStyle(
+                color: isSelected ? Colors.white : Colors.white.withOpacity(0.5),
+                fontSize: 10,
+                fontWeight: isSelected ? FontWeight.bold : FontWeight.normal,
               ),
             ),
-        ],
+            if (isSelected)
+              Container(
+                margin: const EdgeInsets.only(top: 4),
+                width: 4,
+                height: 4,
+                decoration: const BoxDecoration(
+                  color: accentColor,
+                  shape: BoxShape.circle,
+                ),
+              ),
+          ],
+        ),
       ),
     );
   }
+
 }
+

@@ -3,6 +3,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:tashaapp/core/routes/app_routes.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 
 import 'package:tashaapp/features/auth/cubit/auth_cubit.dart';
 
@@ -32,50 +33,8 @@ class _UserTypePageState extends State<UserTypePage> {
       body: Stack(
         fit: StackFit.expand,
         children: [
-          // 1. Immersive Background (Petra)
-          Image.asset(
-            'assets/albatraa.png', // Using the Petra asset we have
-            fit: BoxFit.cover,
-          ),
-
-          // 2. Gradients Overlays
-          // Top Gradient: black/60 to transparent
-          Positioned(
-            top: 0,
-            left: 0,
-            right: 0,
-            height: 160,
-            child: Container(
-              decoration: BoxDecoration(
-                gradient: LinearGradient(
-                  begin: Alignment.topCenter,
-                  end: Alignment.bottomCenter,
-                  colors: [Colors.black.withOpacity(0.6), Colors.transparent],
-                ),
-              ),
-            ),
-          ),
-          // Bottom Gradient: black/80 via black/20 to transparent
-          Positioned(
-            bottom: 0,
-            left: 0,
-            right: 0,
-            height: MediaQuery.of(context).size.height * 0.66, // h-2/3
-            child: Container(
-              decoration: BoxDecoration(
-                gradient: LinearGradient(
-                  begin: Alignment.bottomCenter,
-                  end: Alignment.topCenter,
-                  colors: [
-                    Colors.black.withOpacity(0.8),
-                    Colors.black.withOpacity(0.2),
-                    Colors.transparent,
-                  ],
-                  stops: const [0.0, 0.5, 1.0],
-                ),
-              ),
-            ),
-          ),
+          // 1. Static Background (Extracted to prevent rebuilds)
+          const _UserTypeBackground(),
 
           // 3. Status Bar Mock (Skipped, using SAFE AREA)
           // 4. Main Content
@@ -329,11 +288,19 @@ class _UserTypePageState extends State<UserTypePage> {
                         width: 340,
                         height: 56, // h-14
                         child: ElevatedButton(
-                          onPressed: () {
-                            context.read<AuthCubit>().selectUserType(
-                              _selectedType,
-                            );
-                            Navigator.pushNamed(context, AppRoutes.login);
+                          onPressed: () async {
+                            final prefs = await SharedPreferences.getInstance();
+                            await prefs.setBool('isOnboardingDone', true);
+
+                            if (context.mounted) {
+                              context.read<AuthCubit>().selectUserType(
+                                _selectedType,
+                              );
+                              Navigator.pushReplacementNamed(
+                                context,
+                                AppRoutes.login,
+                              );
+                            }
                           },
                           style:
                               ElevatedButton.styleFrom(
@@ -347,7 +314,7 @@ class _UserTypePageState extends State<UserTypePage> {
                                   0.4,
                                 ), // shadow-2xl shadow-primary/40
                               ).copyWith(
-                                elevation: MaterialStateProperty.all(
+                                elevation: WidgetStateProperty.all(
                                   8,
                                 ), // simplified shadow
                               ),
@@ -411,6 +378,63 @@ class _UserTypePageState extends State<UserTypePage> {
           ),
         ],
       ),
+    );
+  }
+}
+
+class _UserTypeBackground extends StatelessWidget {
+  const _UserTypeBackground();
+
+  @override
+  Widget build(BuildContext context) {
+    return Stack(
+      fit: StackFit.expand,
+      children: [
+        // 1. Immersive Background (Petra)
+        Image.asset(
+          'assets/albatraa.png', // Using the Petra asset we have
+          fit: BoxFit.cover,
+        ),
+
+        // 2. Gradients Overlays
+        // Top Gradient: black/60 to transparent
+        Positioned(
+          top: 0,
+          left: 0,
+          right: 0,
+          height: 160,
+          child: Container(
+            decoration: BoxDecoration(
+              gradient: LinearGradient(
+                begin: Alignment.topCenter,
+                end: Alignment.bottomCenter,
+                colors: [Colors.black.withOpacity(0.6), Colors.transparent],
+              ),
+            ),
+          ),
+        ),
+        // Bottom Gradient: black/80 via black/20 to transparent
+        Positioned(
+          bottom: 0,
+          left: 0,
+          right: 0,
+          height: MediaQuery.sizeOf(context).height * 0.66, // h-2/3
+          child: Container(
+            decoration: BoxDecoration(
+              gradient: LinearGradient(
+                begin: Alignment.bottomCenter,
+                end: Alignment.topCenter,
+                colors: [
+                  Colors.black.withOpacity(0.8),
+                  Colors.black.withOpacity(0.2),
+                  Colors.transparent,
+                ],
+                stops: const [0.0, 0.5, 1.0],
+              ),
+            ),
+          ),
+        ),
+      ],
     );
   }
 }

@@ -103,13 +103,16 @@ class _DurationSelectionPageState extends State<DurationSelectionPage> {
                   height: 56,
                   child: ElevatedButton(
                     onPressed: () {
-                      final category =
-                          ModalRoute.of(context)!.settings.arguments as String;
+                      // Retrieve the list of categories (now List<String>)
+                      final categories =
+                          ModalRoute.of(context)!.settings.arguments
+                              as List<String>;
+
                       Navigator.pushNamed(
                         context,
                         '/trip_summary',
                         arguments: {
-                          'category': category,
+                          'categories': categories, // Passing the list
                           'duration': _selectedDuration,
                         },
                       );

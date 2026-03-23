@@ -2,12 +2,12 @@ import 'package:flutter/material.dart';
 import 'package:tashaapp/core/routes/app_routes.dart';
 
 class TripSummaryPage extends StatelessWidget {
-  final String category;
+  final List<String> categories;
   final int duration;
 
   const TripSummaryPage({
     super.key,
-    required this.category,
+    required this.categories,
     required this.duration,
   });
 
@@ -40,41 +40,51 @@ class TripSummaryPage extends StatelessWidget {
                 ),
                 const SizedBox(height: 40),
                 // Trip Preferences Item
-                Row(
+                Column(
                   children: [
-                    const Icon(
-                      Icons.thumb_up_alt_outlined,
-                      size: 28,
-                      color: Colors.black54,
-                    ),
-                    const SizedBox(width: 16),
-                    Expanded(
-                      child: Text(
-                        "Trip Preferences",
-                        style: Theme.of(
-                          context,
-                        ).textTheme.titleLarge?.copyWith(color: Colors.black54),
-                        overflow: TextOverflow.ellipsis,
-                      ),
-                    ),
-                    // Removed Spacer to allow Expanded to take space, or use spacing
-                    const SizedBox(width: 8),
-                    Container(
-                      padding: const EdgeInsets.symmetric(
-                        horizontal: 12,
-                        vertical: 6,
-                      ),
-                      decoration: BoxDecoration(
-                        color: Colors.black.withOpacity(0.05),
-                        borderRadius: BorderRadius.circular(20),
-                      ),
-                      child: Text(
-                        category,
-                        style: const TextStyle(
-                          color: Colors.black87,
-                          fontWeight: FontWeight.bold,
+                    Align(
+                      alignment: Alignment.centerRight,
+                      child: Container(
+                        constraints: const BoxConstraints(maxWidth: 200),
+                        padding: const EdgeInsets.symmetric(
+                          horizontal: 12,
+                          vertical: 6,
+                        ),
+                        decoration: BoxDecoration(
+                          color: Colors.black.withOpacity(0.05),
+                          borderRadius: BorderRadius.circular(20),
+                        ),
+                        child: Text(
+                          categories.join(", "),
+                          style: const TextStyle(
+                            color: Colors.black87,
+                            fontWeight: FontWeight.bold,
+                            fontSize: 12,
+                          ),
+                          overflow: TextOverflow.ellipsis,
+                          maxLines: 2,
+                          textAlign: TextAlign.right,
                         ),
                       ),
+                    ),
+                    const SizedBox(height: 25),
+                    Row(
+                      children: [
+                        const Icon(
+                          Icons.thumb_up_alt_outlined,
+                          size: 28,
+                          color: Colors.black54,
+                        ),
+                        const SizedBox(width: 16),
+                        Expanded(
+                          child: Text(
+                            "Trip Preferences",
+                            style: Theme.of(context).textTheme.titleLarge
+                                ?.copyWith(color: Colors.black54),
+                            overflow: TextOverflow.ellipsis,
+                          ),
+                        ),
+                      ],
                     ),
                   ],
                 ),
@@ -140,7 +150,10 @@ class TripSummaryPage extends StatelessWidget {
                       Navigator.pushNamed(
                         context,
                         AppRoutes.tripPlanner,
-                        arguments: {'duration': duration, 'category': category},
+                        arguments: {
+                          'duration': duration,
+                          'categories': categories,
+                        },
                       );
                     },
                     style: ElevatedButton.styleFrom(

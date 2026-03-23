@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_test/flutter_test.dart';
-import 'package:tashaapp/features/home/presentation/pages/HomePage.dart';
+import 'package:tashaapp/features/home/presentation/pages/tourist/HomePage.dart';
 import 'package:tashaapp/main.dart';
 
 // Import pages to verify finding them
@@ -8,7 +8,7 @@ import 'package:tashaapp/features/auth/presentation/pages/splash_page.dart';
 import 'package:tashaapp/features/auth/presentation/pages/onboarding_page.dart';
 import 'package:tashaapp/features/auth/presentation/pages/user_type_page.dart';
 import 'package:tashaapp/features/auth/presentation/pages/login_page.dart';
-import 'package:tashaapp/features/home/presentation/pages/trip_preference_page.dart';
+import 'package:tashaapp/features/home/presentation/pages/tourist/trip_preference_page.dart';
 import 'package:tashaapp/features/home/presentation/pages/duration_selection_page.dart';
 import 'package:tashaapp/features/trip_planner/presentation/pages/trip_summary_page.dart';
 

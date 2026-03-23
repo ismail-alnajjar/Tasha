@@ -104,28 +104,8 @@ class _LoginPageState extends State<LoginPage> {
             body: Stack(
               fit: StackFit.expand,
               children: [
-                // 1. Immersive Background
-                Image.network(
-                  'https://lh3.googleusercontent.com/aida-public/AB6AXuBP3QpIAYkXNti4J8kfrSXoX4wSdaWtwlFZ-Ju--A4v-kHwYgCYpQgibJqea7zTBy61Zq1_dZc1Qz3nES8yFGjeO_Oc5OHgsBs97oP7GJXwF57VMFU_Q_ivpLEFILfV5vumbaproEDApt82Tq8jBRXx2fgIMgQzUpzlOh7ZPGVwhoYdI7S4LZRQ2uZ3VhrhG6bCRdS22GiqjKRNXGCSJekdPnPhHZL566euwk75hPHDYTuJCraE8JjbU8ezH-5hzTFLXpuSSQ6lXJx8',
-                  fit: BoxFit.cover,
-                  errorBuilder: (context, error, stackTrace) {
-                    // Fallback if network fails
-                    return Container(color: const Color(0xFF221910));
-                  },
-                ),
-                // Overlay Gradients (linear-gradient to bottom)
-                Container(
-                  decoration: BoxDecoration(
-                    gradient: LinearGradient(
-                      begin: Alignment.topCenter,
-                      end: Alignment.bottomCenter,
-                      colors: [
-                        Colors.black.withOpacity(0.3),
-                        const Color(0xFF221910).withOpacity(0.9),
-                      ],
-                    ),
-                  ),
-                ),
+                // 1. Static Background
+                const _LoginBackground(),
 
                 // 2. Main Content
                 SafeArea(
@@ -139,7 +119,7 @@ class _LoginPageState extends State<LoginPage> {
                         mainAxisAlignment: MainAxisAlignment.center,
                         children: [
                           // App Logo/Header
-                          _buildHeader(primaryColor),
+                          const _LoginHeader(primaryColor: Color(0xFFEE8C2B)),
 
                           const SizedBox(height: 40),
 
@@ -247,57 +227,37 @@ class _LoginPageState extends State<LoginPage> {
                     ),
                   ),
                 ),
+
+                // 3. Switch User Type Button (Moved to top layer)
+                Positioned(
+                  top: 0,
+                  left: 0,
+                  child: SafeArea(
+                    child: Padding(
+                      padding: const EdgeInsets.all(16),
+                      child: IconButton(
+                        icon: const Icon(
+                          Icons.people_outline,
+                          color: Colors.white,
+                          size: 32,
+                        ),
+                        tooltip: 'Change User Type',
+                        onPressed: () {
+                          Navigator.pushNamedAndRemoveUntil(
+                            context,
+                            AppRoutes.Typeuser,
+                            (route) => false,
+                          );
+                        },
+                      ),
+                    ),
+                  ),
+                ),
               ],
             ),
           );
         },
       ),
-    );
-  }
-
-  Widget _buildHeader(Color primaryColor) {
-    return Column(
-      children: [
-        Container(
-          width: 64,
-          height: 64,
-          decoration: BoxDecoration(
-            color: primaryColor,
-            shape: BoxShape.circle,
-            boxShadow: [
-              BoxShadow(
-                color: primaryColor.withOpacity(0.3),
-                blurRadius: 10,
-                offset: const Offset(0, 4),
-              ),
-            ],
-          ),
-          child: const Icon(
-            Icons.travel_explore,
-            color: Colors.white,
-            size: 32,
-          ),
-        ),
-        const SizedBox(height: 16),
-        Text(
-          'TASHA',
-          style: GoogleFonts.plusJakartaSans(
-            fontSize: 36,
-            fontWeight: FontWeight.bold,
-            color: Colors.white,
-            letterSpacing: 1.0,
-          ),
-        ),
-        const SizedBox(height: 8),
-        Text(
-          'Explore the Spirit of Jordan',
-          style: GoogleFonts.plusJakartaSans(
-            fontSize: 18,
-            fontWeight: FontWeight.w500,
-            color: Colors.white.withOpacity(0.8),
-          ),
-        ),
-      ],
     );
   }
 
@@ -486,6 +446,91 @@ class _LoginPageState extends State<LoginPage> {
         ],
       ),
       textAlign: TextAlign.center,
+    );
+  }
+}
+
+class _LoginBackground extends StatelessWidget {
+  const _LoginBackground();
+
+  @override
+  Widget build(BuildContext context) {
+    return Stack(
+      fit: StackFit.expand,
+      children: [
+        Image.network(
+          'https://lh3.googleusercontent.com/aida-public/AB6AXuBP3QpIAYkXNti4J8kfrSXoX4wSdaWtwlFZ-Ju--A4v-kHwYgCYpQgibJqea7zTBy61Zq1_dZc1Qz3nES8yFGjeO_Oc5OHgsBs97oP7GJXwF57VMFU_Q_ivpLEFILfV5vumbaproEDApt82Tq8jBRXx2fgIMgQzUpzlOh7ZPGVwhoYdI7S4LZRQ2uZ3VhrhG6bCRdS22GiqjKRNXGCSJekdPnPhHZL566euwk75hPHDYTuJCraE8JjbU8ezH-5hzTFLXpuSSQ6lXJx8',
+          fit: BoxFit.cover,
+          errorBuilder: (context, error, stackTrace) {
+            return Container(color: const Color(0xFF221910));
+          },
+        ),
+        Container(
+          decoration: BoxDecoration(
+            gradient: LinearGradient(
+              begin: Alignment.topCenter,
+              end: Alignment.bottomCenter,
+              colors: [
+                Colors.black.withOpacity(0.3),
+                const Color(0xFF221910).withOpacity(0.9),
+              ],
+            ),
+          ),
+        ),
+      ],
+    );
+  }
+}
+
+class _LoginHeader extends StatelessWidget {
+  final Color primaryColor;
+
+  const _LoginHeader({required this.primaryColor});
+
+  @override
+  Widget build(BuildContext context) {
+    return Column(
+      children: [
+        Container(
+          width: 64,
+          height: 64,
+          decoration: BoxDecoration(
+            color: primaryColor,
+            shape: BoxShape.circle,
+            boxShadow: [
+              BoxShadow(
+                color: primaryColor.withOpacity(0.3),
+                blurRadius: 10,
+                offset: const Offset(0, 4),
+              ),
+            ],
+          ),
+          child: const Icon(
+            Icons.travel_explore,
+            color: Colors.white,
+            size: 32,
+          ),
+        ),
+        const SizedBox(height: 16),
+        Text(
+          'TASHA',
+          style: GoogleFonts.plusJakartaSans(
+            fontSize: 36,
+            fontWeight: FontWeight.bold,
+            color: Colors.white,
+            letterSpacing: 1.0,
+          ),
+        ),
+        const SizedBox(height: 8),
+        Text(
+          'Explore the Spirit of Jordan',
+          style: GoogleFonts.plusJakartaSans(
+            fontSize: 18,
+            fontWeight: FontWeight.w500,
+            color: Colors.white.withOpacity(0.8),
+          ),
+        ),
+      ],
     );
   }
 }

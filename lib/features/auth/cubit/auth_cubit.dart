@@ -4,6 +4,8 @@ import 'package:google_sign_in/google_sign_in.dart';
 
 import 'auth_state.dart';
 
+class AuthPasswordResetSent extends AuthState {}
+
 class AuthCubit extends Cubit<AuthState> {
   final FirebaseAuth _auth = FirebaseAuth.instance;
 
@@ -69,6 +71,31 @@ class AuthCubit extends Cubit<AuthState> {
       emit(AuthAuthenticated(type));
     } on FirebaseAuthException catch (e) {
       emit(AuthError(e.message ?? "Signup failed"));
+    } catch (e) {
+      emit(AuthError(e.toString()));
+    }
+  }
+
+  /// ================= Password Reset =================
+  void resetPassword(String email) async {
+    emit(AuthLoading());
+    try {
+      await _auth.sendPasswordResetEmail(email: email);
+      emit(
+        AuthPasswordResetSent(),
+      ); // We need to define this state or reuse a success message
+    } on FirebaseAuthException catch (e) {
+      if (e.code == 'user-not-found') {
+        emit(const AuthError("No account found with this email"));
+      } else if (e.code == 'invalid-email') {
+        emit(const AuthError("Invalid email address format"));
+      } else {
+        emit(
+          AuthError(
+            "${e.message ?? "Failed to send reset email"} (Code: ${e.code})",
+          ),
+        );
+      }
     } catch (e) {
       emit(AuthError(e.toString()));
     }

@@ -1,8 +1,8 @@
 import 'package:flutter/material.dart';
-import '../../../../core/routes/app_routes.dart';
+import '../../../../../core/routes/app_routes.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
-import '../../../../features/auth/cubit/auth_cubit.dart';
-import '../../../../features/auth/cubit/auth_state.dart';
+import '../../../../auth/cubit/auth_cubit.dart';
+import '../../../../auth/cubit/auth_state.dart';
 import 'package:google_fonts/google_fonts.dart';
 
 class TripPreferencePage extends StatefulWidget {
@@ -13,8 +13,8 @@ class TripPreferencePage extends StatefulWidget {
 }
 
 class _TripPreferencePageState extends State<TripPreferencePage> {
-  // Track selected category (single selection)
-  String? _selectedCategory;
+  // Track selected categories (multiple selection)
+  final Set<String> _selectedCategories = {};
 
   final List<Map<String, dynamic>> categories = [
     {'name': 'Popular', 'icon': Icons.local_fire_department},
@@ -177,16 +177,18 @@ class _TripPreferencePageState extends State<TripPreferencePage> {
                   child: ElevatedButton(
                     onPressed: () {
                       // Navigate to duration selection
-                      if (_selectedCategory != null) {
+                      if (_selectedCategories.isNotEmpty) {
                         Navigator.pushNamed(
                           context,
                           AppRoutes.durationSelection,
-                          arguments: _selectedCategory,
+                          arguments: _selectedCategories.toList(),
                         );
                       } else {
                         ScaffoldMessenger.of(context).showSnackBar(
                           const SnackBar(
-                            content: Text('Please select a category'),
+                            content: Text(
+                              'Please select at least one category',
+                            ),
                           ),
                         );
                       }
@@ -217,11 +219,15 @@ class _TripPreferencePageState extends State<TripPreferencePage> {
   }
 
   Widget _buildCategoryItem(String name, IconData icon) {
-    final isSelected = _selectedCategory == name;
+    final isSelected = _selectedCategories.contains(name);
     return GestureDetector(
       onTap: () {
         setState(() {
-          _selectedCategory = name;
+          if (isSelected) {
+            _selectedCategories.remove(name);
+          } else {
+            _selectedCategories.add(name);
+          }
         });
       },
       child: Container(

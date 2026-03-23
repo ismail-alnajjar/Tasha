@@ -2,15 +2,15 @@ import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:tashaapp/features/home/cubit/categories_state.dart';
-import '../../../../core/widgets/custom_floating_nav_bar.dart';
-import '../../../../core/widgets/destination_card.dart';
+import '../../../../../core/widgets/custom_floating_nav_bar.dart';
+import '../../../../../core/widgets/destination_card.dart';
 import 'package:tashaapp/features/home/cubit/categories_cubit.dart';
-import '../../../../core/localization/app_localizations.dart';
-import '../../../../features/auth/cubit/auth_cubit.dart';
-import '../../../../features/auth/cubit/auth_state.dart';
-import '../../../../core/routes/app_routes.dart';
+import '../../../../../core/localization/app_localizations.dart';
+import '../../../../auth/cubit/auth_cubit.dart';
+import '../../../../auth/cubit/auth_state.dart';
+import '../../../../../core/routes/app_routes.dart';
 
-import '../widgets/home_loading_widget.dart';
+import '../../widgets/home_loading_widget.dart';
 
 class TouristHomePage extends StatefulWidget {
   const TouristHomePage({super.key});

@@ -31,45 +31,110 @@ class SettingsPage extends StatelessWidget {
       body: ListView(
         padding: const EdgeInsets.all(16),
         children: [
-          // Language Switcher
-          ListTile(
-            title: Text(
-              appLocalizations.translate('language'),
-              style: GoogleFonts.plusJakartaSans(fontWeight: FontWeight.bold),
+          // Language Section
+          Text(
+            appLocalizations.translate('language'),
+            style: GoogleFonts.plusJakartaSans(
+              fontSize: 16,
+              fontWeight: FontWeight.bold,
+              color: primaryColor,
             ),
-            subtitle: Text(locale.languageCode == 'ar' ? 'العربية' : 'English'),
-            trailing: Switch(
-              value: locale.languageCode == 'ar',
-              onChanged: (value) {
-                context.read<LocaleCubit>().switchLanguage();
-              },
-              activeThumbColor: primaryColor,
-            ),
-            onTap: () {
-              context.read<LocaleCubit>().switchLanguage();
-            },
           ),
-          const Divider(),
+          const SizedBox(height: 16),
+          Row(
+            children: [
+              _buildLanguageCard(
+                context,
+                label: 'English',
+                code: 'en',
+                isSelected: locale.languageCode == 'en',
+                icon: Icons.language,
+                primaryColor: primaryColor,
+              ),
+              const SizedBox(width: 16),
+              _buildLanguageCard(
+                context,
+                label: 'العربية',
+                code: 'ar',
+                isSelected: locale.languageCode == 'ar',
+                icon: Icons.translate,
+                primaryColor: primaryColor,
+              ),
+            ],
+          ),
+          const SizedBox(height: 32),
           // Theme Switcher
-          ListTile(
-            title: Text(
-              appLocalizations.translate('dark_mode'),
-              style: GoogleFonts.plusJakartaSans(fontWeight: FontWeight.bold),
+          Container(
+            padding: const EdgeInsets.all(8),
+            decoration: BoxDecoration(
+              color: themeMode == ThemeMode.dark ? Colors.white.withOpacity(0.05) : Colors.grey.shade100,
+              borderRadius: BorderRadius.circular(16),
             ),
-            subtitle: Text(themeMode == ThemeMode.dark ? 'On' : 'Off'),
-            trailing: Switch(
-              value: themeMode == ThemeMode.dark,
-              onChanged: (value) {
-                context.read<ThemeCubit>().toggleTheme();
-              },
-              activeThumbColor: primaryColor,
+            child: ListTile(
+              leading: Icon(
+                themeMode == ThemeMode.dark ? Icons.dark_mode : Icons.light_mode,
+                color: primaryColor,
+              ),
+              title: Text(
+                appLocalizations.translate('dark_mode'),
+                style: GoogleFonts.plusJakartaSans(fontWeight: FontWeight.bold),
+              ),
+              trailing: Switch(
+                value: themeMode == ThemeMode.dark,
+                onChanged: (value) {
+                  context.read<ThemeCubit>().toggleTheme();
+                },
+                activeTrackColor: primaryColor.withOpacity(0.5),
+                activeColor: primaryColor,
+              ),
             ),
-            onTap: () {
-              context.read<ThemeCubit>().toggleTheme();
-            },
           ),
         ],
       ),
     );
   }
+
+  Widget _buildLanguageCard(
+    BuildContext context, {
+    required String label,
+    required String code,
+    required bool isSelected,
+    required IconData icon,
+    required Color primaryColor,
+  }) {
+    return Expanded(
+      child: GestureDetector(
+        onTap: () => context.read<LocaleCubit>().setLanguage(code),
+        child: AnimatedContainer(
+          duration: const Duration(milliseconds: 300),
+          padding: const EdgeInsets.symmetric(vertical: 16),
+          decoration: BoxDecoration(
+            color: isSelected ? primaryColor : Colors.transparent,
+            borderRadius: BorderRadius.circular(16),
+            border: Border.all(
+              color: isSelected ? primaryColor : Colors.grey.shade300,
+              width: 2,
+            ),
+          ),
+          child: Column(
+            children: [
+              Icon(
+                icon,
+                color: isSelected ? Colors.white : Colors.grey,
+              ),
+              const SizedBox(height: 8),
+              Text(
+                label,
+                style: GoogleFonts.plusJakartaSans(
+                  fontWeight: FontWeight.bold,
+                  color: isSelected ? Colors.white : Colors.grey,
+                ),
+              ),
+            ],
+          ),
+        ),
+      ),
+    );
+  }
+
 }

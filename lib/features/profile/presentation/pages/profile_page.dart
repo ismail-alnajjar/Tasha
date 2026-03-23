@@ -6,6 +6,9 @@ import '../../../../core/widgets/custom_floating_nav_bar.dart';
 import '../../../../features/auth/cubit/auth_cubit.dart';
 import '../../../../features/auth/cubit/auth_state.dart';
 import 'settings_page.dart';
+import 'my_bookings_page.dart';
+import 'payment_methods_page.dart';
+import 'collaborative_groups_page.dart';
 import '../../../../core/routes/app_routes.dart';
 
 class ProfilePage extends StatelessWidget {
@@ -240,24 +243,13 @@ class ProfilePage extends StatelessWidget {
                         children: [
                           _buildStatItem(
                             context,
-                            "42",
-                            appLocalizations.translate('trips_taken'),
-                          ),
-                          const SizedBox(width: 16),
-                          _buildStatItem(
-                            context,
-                            "18",
-                            appLocalizations.translate('bucket_list'),
-                          ),
-                          const SizedBox(width: 16),
-                          _buildStatItem(
-                            context,
                             "124",
                             appLocalizations.translate('reviews'),
                           ),
                         ],
                       ),
                     ),
+
 
                     // Travel Management
                     _buildSectionHeader(
@@ -267,18 +259,43 @@ class ProfilePage extends StatelessWidget {
                       context,
                       icon: Icons.calendar_month,
                       title: appLocalizations.translate('my_bookings'),
+                      onTap: () {
+                        Navigator.push(
+                          context,
+                          MaterialPageRoute(
+                            builder: (context) => const MyBookingsPage(),
+                          ),
+                        );
+                      },
                     ),
                     _buildListItem(
                       context,
                       icon: Icons.account_balance_wallet,
                       title: appLocalizations.translate('payment_methods'),
+                      onTap: () {
+                        Navigator.push(
+                          context,
+                          MaterialPageRoute(
+                            builder: (context) => const PaymentMethodsPage(),
+                          ),
+                        );
+                      },
                     ),
                     _buildListItem(
                       context,
                       icon: Icons.groups_3,
                       title: appLocalizations.translate('collaborative_groups'),
                       hasNotification: true,
+                      onTap: () {
+                        Navigator.push(
+                          context,
+                          MaterialPageRoute(
+                            builder: (context) => const CollaborativeGroupsPage(),
+                          ),
+                        );
+                      },
                     ),
+
 
                     // Preferences
                     const SizedBox(height: 24),
@@ -306,6 +323,7 @@ class ProfilePage extends StatelessWidget {
                         children: [
                           OutlinedButton(
                             onPressed: () {
+                              context.read<AuthCubit>().logout();
                               Navigator.pushNamedAndRemoveUntil(
                                 context,
                                 AppRoutes.login,

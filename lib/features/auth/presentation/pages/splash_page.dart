@@ -2,6 +2,8 @@ import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:tashaapp/core/routes/app_routes.dart';
 import 'package:tashaapp/features/auth/presentation/widgets/splash_background_shape.dart';
+import 'package:shared_preferences/shared_preferences.dart';
+import 'package:firebase_auth/firebase_auth.dart';
 
 class SplashPage extends StatefulWidget {
   const SplashPage({super.key});
@@ -52,7 +54,25 @@ class _SplashPageState extends State<SplashPage>
 
     // 4. Navigate
     if (mounted) {
-      Navigator.pushReplacementNamed(context, AppRoutes.onboarding);
+      final prefs = await SharedPreferences.getInstance();
+      // Reset onboarding status for development/testing as requested
+      await prefs.remove('isOnboardingDone');
+      final bool isOnboardingDone = prefs.getBool('isOnboardingDone') ?? false;
+      final user = FirebaseAuth.instance.currentUser;
+
+      if (!isOnboardingDone) {
+        // First time ever: Go to Onboarding
+        Navigator.pushReplacementNamed(context, AppRoutes.onboarding);
+      } else {
+        // Not first time: Check Auth
+        if (user != null) {
+          // Logged in: Go to Home
+          Navigator.pushReplacementNamed(context, AppRoutes.home);
+        } else {
+          // Not logged in: Go to Login
+          Navigator.pushReplacementNamed(context, AppRoutes.login);
+        }
+      }
     }
   }
 

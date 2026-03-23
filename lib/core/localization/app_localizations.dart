@@ -73,6 +73,14 @@ class AppLocalizations {
       'app_version': 'App Version 2.4.0 (Gold)',
       'language': 'Language',
       'dark_mode': 'Dark Mode',
+      'explore': 'Explore',
+      'saved': 'Saved',
+      'offers': 'Offers',
+      'report': 'Report',
+      'add_place': 'Add Place',
+      'host_tourist': 'Host a Tourist',
+      'explore_gems': 'Explore Gems',
+      'saved_places': 'Saved Places',
 
       // UserTypePage
       'welcome_tashah': 'Welcome to Tashah',
@@ -142,6 +150,14 @@ class AppLocalizations {
       'app_version': 'إصدار التطبيق 2.4.0 (الذهبي)',
       'language': 'اللغة',
       'dark_mode': 'الوضع الليلي',
+      'explore': 'استكشاف',
+      'saved': 'المحفوظات',
+      'offers': 'العروض',
+      'report': 'إبلاغ',
+      'add_place': 'إضافة مكان',
+      'host_tourist': 'استضافة سائح',
+      'explore_gems': 'استكشاف الوجهات',
+      'saved_places': 'الأماكن المحفوظة',
 
       // UserTypePage
       'welcome_tashah': 'مرحباً بك في طَشّة',

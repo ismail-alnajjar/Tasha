@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
 import '../../../../core/presentation/widgets/custom_text_field.dart';
+import '../../../../core/routes/app_routes.dart';
 
 class LoginForm extends StatelessWidget {
   final TextEditingController emailController;
@@ -48,7 +49,9 @@ class LoginForm extends StatelessWidget {
           children: [
             _buildLabel('Password'),
             GestureDetector(
-              onTap: () {},
+              onTap: () {
+                Navigator.pushNamed(context, AppRoutes.forgotPassword);
+              },
               child: Text(
                 'Forgot?',
                 style: GoogleFonts.plusJakartaSans(

@@ -22,6 +22,14 @@
           }
         },
         {
+          "client_id": "554268367169-9990jluatrg0b6ssk2n1fkc4msc9hd4j.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "com.example.tashaapp",
+            "certificate_hash": "3f78d662803d76c8633b71e72db01f9d6acbd754"
+          }
+        },
+        {
           "client_id": "554268367169-p6ahttbk67v8jk04u7vao4blsqvsng41.apps.googleusercontent.com",
           "client_type": 3
         }
