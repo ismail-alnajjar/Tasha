@@ -65,7 +65,6 @@ class _CitizenHomePageState extends State<CitizenHomePage> {
                         userName: "Sarah Mitchell",
                         userImage:
                             "https://lh3.googleusercontent.com/aida-public/AB6AXuD2xRjGJBDTCGJcV_7V2mYOvx0ngrourVgu8Fr5MMpEYPY61pw-Ny7VoF4aA66kxUGagh__L7sSsndkRLDoUe9V3YdipBAMDcTvFGv6Kbpfvp46YUs2xfRHdqO4PaQPys_SWbcKc5LI9UrV1G0NMfb1BxshGSnFWelDgc17mprI0VwgrWtTuPwoj3Kkk_M2mwxoGvc2WOFsucrp4jPipTx-QzeP-6B16f7O8QONAmaTguUsyI1TjpnTj4T3Kd2oYCDHm1nlhxv2EOB4",
-                        notificationCount: 2,
                       ),
                       const SizedBox(height: 24),
                       const CitizenSearchSection(),

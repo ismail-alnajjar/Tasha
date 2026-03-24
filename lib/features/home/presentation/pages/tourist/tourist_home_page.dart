@@ -289,25 +289,6 @@ class _TouristHomePageState extends State<TouristHomePage> {
             ],
           ),
         ),
-        Container(
-          width: 40,
-          height: 40,
-          decoration: BoxDecoration(
-            color: theme.colorScheme.surface,
-            shape: BoxShape.circle,
-            boxShadow: [
-              BoxShadow(
-                color: Colors.black12,
-                blurRadius: 2,
-                offset: const Offset(0, 1),
-              ),
-            ],
-          ),
-          child: Icon(
-            Icons.notifications_outlined,
-            color: theme.colorScheme.secondary,
-          ),
-        ),
       ],
     );
   }

@@ -90,6 +90,20 @@ class AppLocalizations {
       'i_am_tourist': 'I am a Tourist',
       'tourist_desc': 'Visiting Jordan for vacation',
       'continue_btn': 'Continue',
+
+      // Report Page
+      'report_problem': 'Report a Problem',
+      'describe_problem': 'Describe the problem you encountered',
+      'write_here': 'Write here...',
+      'attach_photo': 'Attach a photo (Optional)',
+      'click_to_upload': 'Click here to upload a photo',
+      'send': 'Send',
+      'my_reports': 'My Reports',
+      'report_now': 'New Report',
+      'report_title': 'Title',
+      'latitude': 'Latitude',
+      'longitude': 'Longitude',
+      'enter_title': 'Enter a short title...',
     },
     'ar': {
       // Onboarding
@@ -167,6 +181,20 @@ class AppLocalizations {
       'i_am_tourist': 'أنا سائح',
       'tourist_desc': 'زيارة الأردن لقضاء إجازة',
       'continue_btn': 'متابعة',
+
+      // Report Page
+      'report_problem': 'إبلاغ عن مشكلة',
+      'describe_problem': 'صف المشكلة التي واجهتها',
+      'write_here': 'اكتب هنا...',
+      'attach_photo': 'أرفق صورة توضيحية (اختياري)',
+      'click_to_upload': 'اضغط هنا لتحميل صورة',
+      'send': 'إرسال',
+      'my_reports': 'بلاغاتي',
+      'report_now': 'إبلاغ',
+      'report_title': 'العنوان',
+      'latitude': 'خط العرض',
+      'longitude': 'خط الطول',
+      'enter_title': 'قم بكتابة عنوان للمشكلة...',
     },
   };
 

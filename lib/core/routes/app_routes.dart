@@ -23,6 +23,7 @@ import '../../features/home/presentation/pages/citizen/offers_page.dart';
 import '../../features/home/presentation/pages/citizen/report_page.dart';
 import '../../features/home/presentation/pages/citizen/add_place_page.dart';
 import '../../features/home/presentation/pages/citizen/host_tourist_page.dart';
+import '../../features/home/presentation/pages/notifications_page.dart';
 
 class AppRoutes {
   static const String splash = '/';
@@ -48,6 +49,7 @@ class AppRoutes {
   static const String report = '/report';
   static const String addPlace = '/add_place';
   static const String hostTourist = '/host_tourist';
+  static const String notifications = '/notifications';
 
   static Map<String, WidgetBuilder> get routes => {
     splash: (context) => const SplashPage(),
@@ -80,5 +82,6 @@ class AppRoutes {
     report: (context) => const ReportPage(),
     addPlace: (context) => const AddPlacePage(),
     hostTourist: (context) => const HostTouristPage(),
+    notifications: (context) => const NotificationsPage(),
   };
 }

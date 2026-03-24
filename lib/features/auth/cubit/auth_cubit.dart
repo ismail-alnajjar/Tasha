@@ -1,6 +1,7 @@
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:google_sign_in/google_sign_in.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 
 import 'auth_state.dart';
 
@@ -8,9 +9,8 @@ class AuthPasswordResetSent extends AuthState {}
 
 class AuthCubit extends Cubit<AuthState> {
   final FirebaseAuth _auth = FirebaseAuth.instance;
-
-  /// Google Sign-In instance
   final GoogleSignIn _googleSignIn = GoogleSignIn();
+  static const String _userTypeKey = 'user_type';
 
   AuthCubit() : super(AuthInitial());
 
@@ -22,7 +22,9 @@ class AuthCubit extends Cubit<AuthState> {
     try {
       final user = _auth.currentUser;
       if (user != null) {
-        emit(AuthAuthenticated(_pendingUserType ?? 'tourist'));
+        final prefs = await SharedPreferences.getInstance();
+        final savedType = prefs.getString(_userTypeKey) ?? 'tourist';
+        emit(AuthAuthenticated(savedType));
       } else {
         emit(AuthUnauthenticated());
       }
@@ -36,7 +38,10 @@ class AuthCubit extends Cubit<AuthState> {
     emit(AuthLoading());
     try {
       await _auth.signInWithEmailAndPassword(email: email, password: password);
-      emit(AuthAuthenticated(_pendingUserType ?? 'tourist'));
+      final type = _pendingUserType ?? 'tourist';
+      final prefs = await SharedPreferences.getInstance();
+      await prefs.setString(_userTypeKey, type);
+      emit(AuthAuthenticated(type));
     } on FirebaseAuthException catch (e) {
       if (e.code == 'user-not-found') {
         emit(const AuthError("No account found with this email"));
@@ -68,6 +73,10 @@ class AuthCubit extends Cubit<AuthState> {
       );
 
       await userCredential.user?.updateDisplayName(name);
+      
+      final prefs = await SharedPreferences.getInstance();
+      await prefs.setString(_userTypeKey, type);
+      
       emit(AuthAuthenticated(type));
     } on FirebaseAuthException catch (e) {
       emit(AuthError(e.message ?? "Signup failed"));
@@ -122,7 +131,11 @@ class AuthCubit extends Cubit<AuthState> {
 
       await _auth.signInWithCredential(credential);
 
-      emit(AuthAuthenticated(_pendingUserType ?? 'tourist'));
+      final type = _pendingUserType ?? 'tourist';
+      final prefs = await SharedPreferences.getInstance();
+      await prefs.setString(_userTypeKey, type);
+
+      emit(AuthAuthenticated(type));
     } on FirebaseAuthException catch (e) {
       emit(AuthError(e.message ?? 'Google Sign-In failed'));
     } catch (e) {
@@ -150,6 +163,10 @@ class AuthCubit extends Cubit<AuthState> {
       await _auth.signOut();
       await _googleSignIn.signOut();
       _pendingUserType = null;
+      
+      final prefs = await SharedPreferences.getInstance();
+      await prefs.remove(_userTypeKey);
+      
       emit(AuthUnauthenticated());
     } catch (e) {
       emit(AuthError(e.toString()));

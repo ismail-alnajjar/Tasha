@@ -1,16 +1,17 @@
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
+import '../../../../../core/routes/app_routes.dart';
+import '../../../cubit/notification_cubit.dart';
 
 class CitizenHeaderSection extends StatelessWidget {
   final String userName;
   final String userImage;
-  final int notificationCount;
 
   const CitizenHeaderSection({
     super.key,
     required this.userName,
     required this.userImage,
-    this.notificationCount = 0,
   });
 
   @override
@@ -24,6 +25,7 @@ class CitizenHeaderSection extends StatelessWidget {
       child: Row(
         mainAxisAlignment: MainAxisAlignment.spaceBetween,
         children: [
+          // Left: Welcome Text
           Column(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
@@ -46,14 +48,77 @@ class CitizenHeaderSection extends StatelessWidget {
               ),
             ],
           ),
-          Stack(
+
+          // Right: Notifications + Profile
+          Row(
             children: [
+              // Notification Bell with Badge
+              GestureDetector(
+                onTap: () => Navigator.pushNamed(context, AppRoutes.notifications),
+                child: BlocBuilder<NotificationCubit, NotificationState>(
+                  builder: (context, state) {
+                    return Stack(
+                      children: [
+                        Container(
+                          width: 44,
+                          height: 44,
+                          decoration: BoxDecoration(
+                            color: Colors.white,
+                            shape: BoxShape.circle,
+                            boxShadow: [
+                              BoxShadow(
+                                color: Colors.black.withOpacity(0.05),
+                                blurRadius: 10,
+                                offset: const Offset(0, 4),
+                              ),
+                            ],
+                          ),
+                          child: const Icon(
+                            Icons.notifications_none_rounded,
+                            color: primaryColor,
+                            size: 24,
+                          ),
+                        ),
+                        if (state.unreadCount > 0)
+                          Positioned(
+                            top: 2,
+                            right: 2,
+                            child: Container(
+                              padding: const EdgeInsets.all(4),
+                              decoration: BoxDecoration(
+                                color: orangeColor,
+                                shape: BoxShape.circle,
+                                border: Border.all(color: Colors.white, width: 2),
+                              ),
+                              constraints: const BoxConstraints(
+                                minWidth: 18,
+                                minHeight: 18,
+                              ),
+                              child: Center(
+                                child: Text(
+                                  state.unreadCount.toString(),
+                                  style: const TextStyle(
+                                    color: Colors.white,
+                                    fontSize: 9,
+                                    fontWeight: FontWeight.bold,
+                                  ),
+                                ),
+                              ),
+                            ),
+                          ),
+                      ],
+                    );
+                  },
+                ),
+              ),
+              const SizedBox(width: 12),
+              // Profile Image
               Container(
-                width: 56,
-                height: 56,
+                width: 50,
+                height: 50,
                 decoration: BoxDecoration(
                   shape: BoxShape.circle,
-                  border: Border.all(color: primaryColor, width: 2),
+                  border: Border.all(color: primaryColor.withOpacity(0.1), width: 1.5),
                 ),
                 padding: const EdgeInsets.all(2),
                 child: Container(
@@ -66,33 +131,6 @@ class CitizenHeaderSection extends StatelessWidget {
                   ),
                 ),
               ),
-              if (notificationCount > 0)
-                Positioned(
-                  top: 0,
-                  right: 0,
-                  child: Container(
-                    padding: const EdgeInsets.all(4),
-                    decoration: BoxDecoration(
-                      color: orangeColor,
-                      shape: BoxShape.circle,
-                      border: Border.all(color: Colors.white, width: 2),
-                    ),
-                    constraints: const BoxConstraints(
-                      minWidth: 20,
-                      minHeight: 20,
-                    ),
-                    child: Center(
-                      child: Text(
-                        notificationCount.toString(),
-                        style: const TextStyle(
-                          color: Colors.white,
-                          fontSize: 10,
-                          fontWeight: FontWeight.bold,
-                        ),
-                      ),
-                    ),
-                  ),
-                ),
             ],
           ),
         ],
