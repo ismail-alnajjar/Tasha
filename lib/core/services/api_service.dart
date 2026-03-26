@@ -35,4 +35,8 @@ class ApiService {
     FormData formData = FormData.fromMap(data);
     return await _dio.post(path, data: formData);
   }
+
+  Future<Response> postFormData(String path, FormData formData) async {
+    return await _dio.post(path, data: formData);
+  }
 }

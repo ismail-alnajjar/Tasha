@@ -56,32 +56,39 @@ class _CitizenHomePageState extends State<CitizenHomePage> {
                 color: theme.scaffoldBackgroundColor,
               ),
               Expanded(
-                child: SingleChildScrollView(
-                  padding: const EdgeInsets.fromLTRB(0, 0, 0, 100),
-                  child: Column(
-                    crossAxisAlignment: CrossAxisAlignment.start,
-                    children: [
-                      const CitizenHeaderSection(
-                        userName: "Sarah Mitchell",
-                        userImage:
-                            "https://lh3.googleusercontent.com/aida-public/AB6AXuD2xRjGJBDTCGJcV_7V2mYOvx0ngrourVgu8Fr5MMpEYPY61pw-Ny7VoF4aA66kxUGagh__L7sSsndkRLDoUe9V3YdipBAMDcTvFGv6Kbpfvp46YUs2xfRHdqO4PaQPys_SWbcKc5LI9UrV1G0NMfb1BxshGSnFWelDgc17mprI0VwgrWtTuPwoj3Kkk_M2mwxoGvc2WOFsucrp4jPipTx-QzeP-6B16f7O8QONAmaTguUsyI1TjpnTj4T3Kd2oYCDHm1nlhxv2EOB4",
-                      ),
-                      const SizedBox(height: 24),
-                      const CitizenSearchSection(),
-                      const SizedBox(height: 24),
-                      const CitizenQuickActions(),
-                      const SizedBox(height: 24),
-                      CitizenCategoriesSection(
-                        onCategorySelected: (category) {
-                          // TODO: Implement category filtering if needed
-                        },
-                      ),
-
-                      const SizedBox(height: 32),
-                      const CitizenHiddenGemsSection(),
-                      const SizedBox(height: 32),
-                      const CitizenWeekendPlansSection(),
-                    ],
+                child: RefreshIndicator(
+                  onRefresh: () async {
+                    context.read<CategoriesCubit>().loadCategories();
+                    // You can add other reloads here if needed
+                    await Future.delayed(const Duration(seconds: 1));
+                  },
+                  child: SingleChildScrollView(
+                    physics: const AlwaysScrollableScrollPhysics(),
+                    padding: const EdgeInsets.fromLTRB(0, 0, 0, 100),
+                    child: Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
+                        const CitizenHeaderSection(
+                          userName: "Sarah Mitchell",
+                          userImage:
+                              "https://lh3.googleusercontent.com/aida-public/AB6AXuD2xRjGJBDTCGJcV_7V2mYOvx0ngrourVgu8Fr5MMpEYPY61pw-Ny7VoF4aA66kxUGagh__L7sSsndkRLDoUe9V3YdipBAMDcTvFGv6Kbpfvp46YUs2xfRHdqO4PaQPys_SWbcKc5LI9UrV1G0NMfb1BxshGSnFWelDgc17mprI0VwgrWtTuPwoj3Kkk_M2mwxoGvc2WOFsucrp4jPipTx-QzeP-6B16f7O8QONAmaTguUsyI1TjpnTj4T3Kd2oYCDHm1nlhxv2EOB4",
+                        ),
+                        const SizedBox(height: 24),
+                        const CitizenSearchSection(),
+                        const SizedBox(height: 24),
+                        const CitizenQuickActions(),
+                        const SizedBox(height: 24),
+                        CitizenCategoriesSection(
+                          onCategorySelected: (category) {
+                            // TODO: Implement category filtering if needed
+                          },
+                        ),
+                        const SizedBox(height: 32),
+                        const CitizenHiddenGemsSection(),
+                        const SizedBox(height: 32),
+                        const CitizenWeekendPlansSection(),
+                      ],
+                    ),
                   ),
                 ),
               ),

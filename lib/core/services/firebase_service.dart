@@ -104,29 +104,41 @@ class FirebaseService {
 
   /// --- 6. Helper for Foreground SnackBar ---
   bool _listenerSetup = false;
-  void setupForegroundListener(BuildContext context) {
+  void setupForegroundListener(BuildContext context, GlobalKey<ScaffoldMessengerState> messengerKey) {
     if (_listenerSetup) return;
     _listenerSetup = true;
 
-    FirebaseMessaging.onMessage.listen((RemoteMessage message) {
+    FirebaseMessaging.onMessage.listen((RemoteMessage message) async {
+      debugPrint("🔔 Foreground Message Received: ${message.messageId}");
+      
       if (message.notification != null) {
-        // Save to Firestore history
-        context.read<NotificationCubit>().addNotification(
-          title: message.notification?.title ?? 'New Notification',
-          body: message.notification?.body ?? '',
-        );
+        final title = message.notification?.title ?? 'New Notification';
+        final body = message.notification?.body ?? '';
 
-        // Show SnackBar with enhanced UI
-        final scaffoldMessenger = ScaffoldMessenger.maybeOf(context);
-        scaffoldMessenger?.clearSnackBars();
-        scaffoldMessenger?.showSnackBar(
-          SnackBar(
-            content: InkWell(
-              onTap: () {
-                scaffoldMessenger.hideCurrentSnackBar();
-                // Navigate to notifications page or specific item
-              },
-              child: Row(
+        // 1. Direct Save to Firestore (Bypassing Cubit context dependencies)
+        final currentUser = FirebaseAuth.instance.currentUser;
+        if (currentUser != null) {
+          try {
+            await FirebaseFirestore.instance.collection('notifications').add({
+              'userId': currentUser.uid,
+              'title': title,
+              'body': body,
+              'timestamp': FieldValue.serverTimestamp(),
+              'isRead': false,
+            });
+            debugPrint("✅ Notification saved directly to Firestore.");
+          } catch (e) {
+            debugPrint("❌ Error saving notification directly: $e");
+          }
+        }
+
+        // 2. Show SnackBar using GlobalKey
+        final state = messengerKey.currentState;
+        if (state != null) {
+          state.hideCurrentSnackBar();
+          state.showSnackBar(
+            SnackBar(
+              content: Row(
                 children: [
                   const Icon(Icons.notifications_active, color: Colors.white),
                   const SizedBox(width: 12),
@@ -149,14 +161,20 @@ class FirebaseService {
                   ),
                 ],
               ),
+              backgroundColor: const Color(0xFF134E4A),
+              behavior: SnackBarBehavior.floating,
+              shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
+              margin: EdgeInsets.only(
+                bottom: MediaQuery.of(context).size.height - 160,
+                right: 16,
+                left: 16,
+              ),
+              duration: const Duration(seconds: 4),
             ),
-            backgroundColor: const Color(0xFF134E4A),
-            behavior: SnackBarBehavior.floating,
-            shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
-            margin: const EdgeInsets.all(16),
-            duration: const Duration(seconds: 4),
-          ),
-        );
+          );
+        } else {
+          debugPrint("❌ ScaffoldMessengerState is NULL. Check GlobalKey assignment.");
+        }
       }
     });
   }

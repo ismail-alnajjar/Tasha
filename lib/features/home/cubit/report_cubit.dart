@@ -1,4 +1,5 @@
 import 'dart:io';
+import 'dart:async';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import '../data/repositories/report_repository.dart';
 import 'report_state.dart';
@@ -13,7 +14,7 @@ class ReportCubit extends Cubit<ReportState> {
     required String description,
     required double latitude,
     required double longitude,
-    File? photo,
+    List<File>? photos,
   }) async {
     emit(ReportLoading());
     try {
@@ -22,7 +23,7 @@ class ReportCubit extends Cubit<ReportState> {
         description: description,
         latitude: latitude,
         longitude: longitude,
-        photo: photo,
+        photos: photos,
       );
       emit(ReportSuccess());
     } catch (e) {
@@ -38,5 +39,21 @@ class ReportCubit extends Cubit<ReportState> {
     } catch (e) {
       emit(ReportError(e.toString()));
     }
+  }
+
+  /// Listen to reports to detect new replies from admin in real-time
+  StreamSubscription? _reportsSubscription;
+  void startListeningToReportReplies(String uid, Function(String, String) onNewReply) {
+    _reportsSubscription?.cancel();
+    // Assuming reports are also in Firestore or we can poll/listen. 
+    // Since we're using a REST API repository for getMyReports, 
+    // real-time listening for replies should ideally be via Firebase Messaging 
+    // or a recurring refresh logic.
+  }
+
+  @override
+  Future<void> close() {
+    _reportsSubscription?.cancel();
+    return super.close();
   }
 }

@@ -6,7 +6,7 @@ class ReportModel extends Equatable {
   final String description;
   final double latitude;
   final double longitude;
-  final String? photoUrl;
+  final List<String> photoUrls;
   final String? status;
   final DateTime? createdAt;
   final String? adminReply;
@@ -17,7 +17,7 @@ class ReportModel extends Equatable {
     required this.description,
     required this.latitude,
     required this.longitude,
-    this.photoUrl,
+    this.photoUrls = const [],
     this.status,
     this.createdAt,
     this.adminReply,
@@ -48,7 +48,7 @@ class ReportModel extends Equatable {
       description: json['description'] ?? json['Description'] ?? 'No Description',
       latitude: lat,
       longitude: lng,
-      photoUrl: json['imageUrl'] ?? json['ImageUrl'] ?? json['photo'],
+      photoUrls: _parsePhotos(json['photos'] ?? json['Photos'] ?? json['imageUrls'] ?? json['ImageUrls'] ?? json['images'] ?? json['Images'] ?? json['photoUrls'] ?? json['photoUrl'] ?? json['ImageUrl'] ?? json['imageUrl'] ?? json['photo']),
       status: statusVal,
       createdAt: dateVal != null ? DateTime.tryParse(dateVal) : null,
       adminReply: json['adminReply']?.toString() ?? json['AdminReply']?.toString() ?? json['admin_reply']?.toString() ?? json['response']?.toString(),
@@ -64,6 +64,19 @@ class ReportModel extends Equatable {
     };
   }
 
+  static List<String> _parsePhotos(dynamic imageField) {
+    if (imageField == null) return [];
+    if (imageField is List) {
+      return imageField.map((e) => e.toString()).toList();
+    } else if (imageField is String && imageField.trim().isNotEmpty) {
+      if (imageField.contains(';')) {
+        return imageField.split(';').map((e) => e.trim()).where((e) => e.isNotEmpty).toList();
+      }
+      return [imageField];
+    }
+    return [];
+  }
+
   @override
-  List<Object?> get props => [id, title, description, latitude, longitude, photoUrl, status, createdAt, adminReply];
+  List<Object?> get props => [id, title, description, latitude, longitude, photoUrls, status, createdAt, adminReply];
 }
