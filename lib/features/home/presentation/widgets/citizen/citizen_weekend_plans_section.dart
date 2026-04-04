@@ -6,7 +6,9 @@ class CitizenWeekendPlansSection extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    const Color primaryColor = Color(0xFF134E4A);
+    final theme = Theme.of(context);
+    final isDark = theme.brightness == Brightness.dark;
+    final Color primaryColor = isDark ? Colors.white : const Color(0xFF134E4A);
 
     return Column(
       children: [
@@ -78,17 +80,20 @@ class CitizenWeekendPlansSection extends StatelessWidget {
     required List<String> tags,
     required String imageUrl,
   }) {
-    const Color primaryColor = Color(0xFF134E4A);
+    final theme = Theme.of(context);
+    final isDark = theme.brightness == Brightness.dark;
+    final Color primaryColor = isDark ? Colors.white : const Color(0xFF134E4A);
+    final Color backgroundColor = isDark ? theme.cardColor : Colors.white;
 
     return Container(
       width: 280,
       decoration: BoxDecoration(
-        color: Colors.white,
+        color: backgroundColor,
         borderRadius: BorderRadius.circular(16),
-        border: Border.all(color: Colors.grey.withOpacity(0.1)),
+        border: Border.all(color: isDark ? Colors.white12 : Colors.grey.withOpacity(0.1)),
         boxShadow: [
           BoxShadow(
-            color: Colors.black.withOpacity(0.05),
+            color: isDark ? Colors.black38 : Colors.black.withOpacity(0.05),
             blurRadius: 10,
             offset: const Offset(0, 4),
           ),
@@ -121,7 +126,7 @@ class CitizenWeekendPlansSection extends StatelessWidget {
                         vertical: 4,
                       ),
                       decoration: BoxDecoration(
-                        color: Colors.white.withOpacity(0.9),
+                        color: isDark ? theme.cardColor.withOpacity(0.9) : Colors.white.withOpacity(0.9),
                         borderRadius: BorderRadius.circular(8),
                       ),
                       child: Column(

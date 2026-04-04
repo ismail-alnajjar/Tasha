@@ -27,6 +27,9 @@ class _TripPreferencePageState extends State<TripPreferencePage> {
 
   @override
   Widget build(BuildContext context) {
+    final theme = Theme.of(context);
+    final isDark = theme.brightness == Brightness.dark;
+
     // Check for Guest
     final authState = context.watch<AuthCubit>().state;
     final isGuest =
@@ -105,8 +108,8 @@ class _TripPreferencePageState extends State<TripPreferencePage> {
             begin: Alignment.topCenter,
             end: Alignment.bottomCenter,
             colors: [
-              Colors.amber.withOpacity(0.4), // Light amber at top
-              Colors.white, // White at bottom
+              Colors.amber.withOpacity(isDark ? 0.2 : 0.4), // Light amber at top
+              isDark ? theme.scaffoldBackgroundColor : Colors.white, // Match theme at bottom
             ],
             stops: const [0.0, 0.6], // Fades out quickly
           ),
@@ -120,10 +123,10 @@ class _TripPreferencePageState extends State<TripPreferencePage> {
                 const SizedBox(height: 30),
                 GestureDetector(
                   onTap: () => Navigator.pop(context),
-                  child: const Icon(
+                  child: Icon(
                     Icons.arrow_back_ios,
                     size: 20,
-                    color: Colors.black,
+                    color: isDark ? Colors.white : Colors.black,
                   ),
                 ),
                 Spacer(flex: 1),
@@ -138,7 +141,7 @@ class _TripPreferencePageState extends State<TripPreferencePage> {
                   "Trip Preferences",
                   style: Theme.of(context).textTheme.headlineMedium?.copyWith(
                     fontWeight: FontWeight.bold,
-                    color: Colors.black,
+                    color: isDark ? Colors.white : Colors.black,
                     fontSize: 28,
                   ),
                 ),
@@ -166,6 +169,8 @@ class _TripPreferencePageState extends State<TripPreferencePage> {
                     return _buildCategoryItem(
                       categories[index]['name'],
                       categories[index]['icon'],
+                      isDark,
+                      theme,
                     );
                   },
                 ),
@@ -194,17 +199,18 @@ class _TripPreferencePageState extends State<TripPreferencePage> {
                       }
                     },
                     style: ElevatedButton.styleFrom(
-                      backgroundColor: Colors.black,
-                      foregroundColor: Colors.white,
+                      backgroundColor: isDark ? Colors.amber.withOpacity(0.8) : Colors.black,
+                      foregroundColor: isDark ? Colors.black : Colors.white,
                       shape: RoundedRectangleBorder(
                         borderRadius: BorderRadius.circular(30),
                       ),
                     ),
-                    child: const Text(
+                    child: Text(
                       "Continue",
                       style: TextStyle(
                         fontSize: 18,
                         fontWeight: FontWeight.bold,
+                        color: isDark ? Colors.black : Colors.white,
                       ),
                     ),
                   ),
@@ -218,7 +224,7 @@ class _TripPreferencePageState extends State<TripPreferencePage> {
     );
   }
 
-  Widget _buildCategoryItem(String name, IconData icon) {
+  Widget _buildCategoryItem(String name, IconData icon, bool isDark, ThemeData theme) {
     final isSelected = _selectedCategories.contains(name);
     return GestureDetector(
       onTap: () {
@@ -233,11 +239,11 @@ class _TripPreferencePageState extends State<TripPreferencePage> {
       child: Container(
         decoration: BoxDecoration(
           color: isSelected
-              ? Colors.black.withOpacity(0.05)
-              : Colors.grey.shade50,
+              ? (isDark ? Colors.white12 : Colors.black.withOpacity(0.05))
+              : (isDark ? theme.cardColor : Colors.grey.shade50),
           borderRadius: BorderRadius.circular(8),
           border: Border.all(
-            color: isSelected ? Colors.black : Colors.transparent,
+            color: isSelected ? (isDark ? Colors.white : Colors.black) : Colors.transparent,
             width: 1,
           ),
         ),
@@ -247,7 +253,7 @@ class _TripPreferencePageState extends State<TripPreferencePage> {
             Icon(
               icon,
               size: 16,
-              color: isSelected ? Colors.black : Colors.brown.shade400,
+              color: isSelected ? (isDark ? Colors.white : Colors.black) : Colors.brown.shade400,
             ),
             const SizedBox(width: 4), // Reduced spacing slightly
             Flexible(
@@ -256,7 +262,7 @@ class _TripPreferencePageState extends State<TripPreferencePage> {
                 style: TextStyle(
                   fontWeight: isSelected ? FontWeight.bold : FontWeight.w500,
                   fontSize: 12, // Reduced font size slightly
-                  color: Colors.black87,
+                  color: isSelected && isDark ? Colors.white : (isDark ? Colors.white70 : Colors.black87),
                 ),
                 overflow: TextOverflow.ellipsis,
               ),

@@ -303,9 +303,9 @@ class _TouristHomePageState extends State<TouristHomePage> {
       decoration: BoxDecoration(
         color: theme.colorScheme.surface,
         borderRadius: BorderRadius.circular(16),
-        border: Border.all(color: Colors.black.withOpacity(0.05)),
-        boxShadow: const [
-          BoxShadow(color: Colors.black12, blurRadius: 2, offset: Offset(0, 1)),
+        border: Border.all(color: theme.brightness == Brightness.dark ? Colors.white12 : Colors.black.withOpacity(0.05)),
+        boxShadow: [
+          BoxShadow(color: theme.brightness == Brightness.dark ? Colors.black38 : Colors.black12, blurRadius: 2, offset: const Offset(0, 1)),
         ],
       ),
       child: Row(
@@ -392,7 +392,7 @@ class _TouristHomePageState extends State<TouristHomePage> {
                 boxShadow: isSelected
                     ? [
                         BoxShadow(
-                          color: const Color(0xFFE75B04).withOpacity(0.2),
+                          color: const Color(0xFFE75B04).withOpacity(0.4),
                           blurRadius: 8,
                           offset: const Offset(0, 4),
                         ),

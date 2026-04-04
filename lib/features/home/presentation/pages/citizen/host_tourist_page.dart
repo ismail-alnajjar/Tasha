@@ -42,7 +42,7 @@ class _HostTouristPageState extends State<HostTouristPage> {
       body: BlocListener<LocalHostCubit, LocalHostState>(
         listener: (context, state) {
           if (state is LocalHostSuccess) {
-            _showSuccessDialog(context);
+            _showSuccessDialog(context, isDark, theme);
           } else if (state is LocalHostError) {
             ScaffoldMessenger.of(context).showSnackBar(
               SnackBar(content: Text(state.message), backgroundColor: Colors.red),
@@ -132,12 +132,12 @@ class _HostTouristPageState extends State<HostTouristPage> {
     );
   }
 
-  void _showSuccessDialog(BuildContext context) {
+  void _showSuccessDialog(BuildContext context, bool isDark, ThemeData theme) {
     showDialog(
       context: context,
       barrierDismissible: false,
       builder: (context) => AlertDialog(
-        backgroundColor: Colors.white,
+        backgroundColor: isDark ? theme.cardColor : Colors.white,
         shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(24)),
         content: Column(
           mainAxisSize: MainAxisSize.min,
@@ -146,7 +146,7 @@ class _HostTouristPageState extends State<HostTouristPage> {
             const SizedBox(height: 24),
             Text(
               'مبارك! لقد أصبحت مضيفاً',
-              style: GoogleFonts.cairo(fontSize: 20, fontWeight: FontWeight.bold, color: Colors.black87),
+              style: GoogleFonts.cairo(fontSize: 20, fontWeight: FontWeight.bold, color: isDark ? Colors.white : Colors.black87),
               textAlign: TextAlign.center,
             ),
             const SizedBox(height: 32),

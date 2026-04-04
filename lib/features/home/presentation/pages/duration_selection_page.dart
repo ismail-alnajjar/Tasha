@@ -12,13 +12,20 @@ class _DurationSelectionPageState extends State<DurationSelectionPage> {
 
   @override
   Widget build(BuildContext context) {
+    final theme = Theme.of(context);
+    final isDark = theme.brightness == Brightness.dark;
+
     return Scaffold(
+      backgroundColor: theme.scaffoldBackgroundColor,
       body: Container(
         decoration: BoxDecoration(
           gradient: LinearGradient(
             begin: Alignment.topCenter,
             end: Alignment.bottomCenter,
-            colors: [Colors.amber.withOpacity(0.7), Colors.white],
+            colors: [
+              Colors.amber.withOpacity(isDark ? 0.2 : 0.7),
+              isDark ? theme.scaffoldBackgroundColor : Colors.white
+            ],
             stops: const [0.0, 0.6],
           ),
         ),
@@ -41,10 +48,10 @@ class _DurationSelectionPageState extends State<DurationSelectionPage> {
                           alignment: Alignment.centerLeft,
                           child: GestureDetector(
                             onTap: () => Navigator.pop(context),
-                            child: const Icon(
+                            child: Icon(
                               Icons.arrow_back_ios,
                               size: 20,
-                              color: Colors.black,
+                              color: isDark ? Colors.white : Colors.black,
                             ),
                           ),
                         ),
@@ -53,7 +60,7 @@ class _DurationSelectionPageState extends State<DurationSelectionPage> {
                           style: Theme.of(context).textTheme.headlineMedium
                               ?.copyWith(
                                 fontWeight: FontWeight.bold,
-                                color: Colors.black,
+                                color: isDark ? Colors.white : Colors.black,
                                 fontSize: 24, // Slightly reduced
                               ),
                           textAlign: TextAlign.center,
@@ -84,7 +91,7 @@ class _DurationSelectionPageState extends State<DurationSelectionPage> {
                           style: TextStyle(
                             fontSize: isSelected ? 50 : 30,
                             color: isSelected
-                                ? Colors.black
+                                ? (isDark ? Colors.white : Colors.black)
                                 : Colors.grey.shade400,
                             fontWeight: isSelected
                                 ? FontWeight.bold
@@ -118,17 +125,18 @@ class _DurationSelectionPageState extends State<DurationSelectionPage> {
                       );
                     },
                     style: ElevatedButton.styleFrom(
-                      backgroundColor: Colors.black,
-                      foregroundColor: Colors.white,
+                      backgroundColor: isDark ? Colors.amber.withOpacity(0.8) : Colors.black,
+                      foregroundColor: isDark ? Colors.black : Colors.white,
                       shape: RoundedRectangleBorder(
                         borderRadius: BorderRadius.circular(30),
                       ),
                     ),
-                    child: const Text(
+                    child: Text(
                       "Confirm",
                       style: TextStyle(
                         fontSize: 18,
                         fontWeight: FontWeight.bold,
+                        color: isDark ? Colors.black : Colors.white,
                       ),
                     ),
                   ),

@@ -34,7 +34,10 @@ class _CitizenCategoriesSectionState extends State<CitizenCategoriesSection> {
 
   @override
   Widget build(BuildContext context) {
-    const Color primaryColor = Color(0xFF134E4A);
+    final theme = Theme.of(context);
+    final isDark = theme.brightness == Brightness.dark;
+    final Color primaryColor = isDark ? Colors.white : const Color(0xFF134E4A);
+    final Color backgroundColor = isDark ? theme.cardColor : Colors.white;
 
     return SizedBox(
       height: 48,
@@ -57,11 +60,11 @@ class _CitizenCategoriesSectionState extends State<CitizenCategoriesSection> {
             child: Container(
               padding: const EdgeInsets.symmetric(horizontal: 20),
               decoration: BoxDecoration(
-                color: isSelected ? primaryColor : Colors.white,
+                color: isSelected ? primaryColor : backgroundColor,
                 borderRadius: BorderRadius.circular(30),
                 boxShadow: [
                   BoxShadow(
-                    color: Colors.black.withOpacity(0.05),
+                    color: isDark ? Colors.black38 : Colors.black.withOpacity(0.05),
                     blurRadius: 10,
                     offset: const Offset(0, 4),
                   ),
@@ -71,14 +74,14 @@ class _CitizenCategoriesSectionState extends State<CitizenCategoriesSection> {
                 children: [
                   Icon(
                     category['icon'],
-                    color: isSelected ? Colors.white : primaryColor,
+                    color: isSelected ? (isDark ? Colors.black : Colors.white) : primaryColor,
                     size: 20,
                   ),
                   const SizedBox(width: 8),
                   Text(
                     category['label'],
                     style: GoogleFonts.plusJakartaSans(
-                      color: isSelected ? Colors.white : primaryColor,
+                      color: isSelected ? (isDark ? Colors.black : Colors.white) : primaryColor,
                       fontSize: 14,
                       fontWeight: isSelected
                           ? FontWeight.w600

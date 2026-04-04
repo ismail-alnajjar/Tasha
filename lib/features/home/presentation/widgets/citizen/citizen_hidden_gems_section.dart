@@ -6,7 +6,9 @@ class CitizenHiddenGemsSection extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    const Color primaryColor = Color(0xFF134E4A);
+    final theme = Theme.of(context);
+    final isDark = theme.brightness == Brightness.dark;
+    final Color primaryColor = isDark ? Colors.white : const Color(0xFF134E4A);
 
     return Column(
       children: [
@@ -75,6 +77,10 @@ class CitizenHiddenGemsSection extends StatelessWidget {
     required String rating,
     required String imageUrl,
   }) {
+    final theme = Theme.of(context);
+    final isDark = theme.brightness == Brightness.dark;
+    final Color primaryColor = isDark ? Colors.white : const Color(0xFF134E4A);
+
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
@@ -160,7 +166,7 @@ class CitizenHiddenGemsSection extends StatelessWidget {
           style: GoogleFonts.plusJakartaSans(
             fontSize: 14,
             fontWeight: FontWeight.bold,
-            color: const Color(0xFF134E4A),
+            color: primaryColor,
           ),
           maxLines: 1,
           overflow: TextOverflow.ellipsis,

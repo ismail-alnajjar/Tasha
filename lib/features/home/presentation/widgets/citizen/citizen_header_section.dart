@@ -17,7 +17,9 @@ class CitizenHeaderSection extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     // Colors from design
-    const Color primaryColor = Color(0xFF134E4A);
+    final theme = Theme.of(context);
+    final isDark = theme.brightness == Brightness.dark;
+    final Color primaryColor = isDark ? Colors.white : const Color(0xFF134E4A);
     const Color orangeColor = Color(0xFFF97316);
 
     return Padding(
@@ -63,17 +65,17 @@ class CitizenHeaderSection extends StatelessWidget {
                           width: 44,
                           height: 44,
                           decoration: BoxDecoration(
-                            color: Colors.white,
+                            color: isDark ? theme.cardColor : Colors.white,
                             shape: BoxShape.circle,
                             boxShadow: [
                               BoxShadow(
-                                color: Colors.black.withOpacity(0.05),
+                                color: isDark ? Colors.black38 : Colors.black.withOpacity(0.05),
                                 blurRadius: 10,
                                 offset: const Offset(0, 4),
                               ),
                             ],
                           ),
-                          child: const Icon(
+                          child: Icon(
                             Icons.notifications_none_rounded,
                             color: primaryColor,
                             size: 24,

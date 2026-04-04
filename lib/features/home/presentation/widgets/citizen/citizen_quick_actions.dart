@@ -8,7 +8,9 @@ class CitizenQuickActions extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    const Color primaryColor = Color(0xFF134E4A);
+    final theme = Theme.of(context);
+    final isDark = theme.brightness == Brightness.dark;
+    final Color primaryColor = isDark ? Colors.white : const Color(0xFF134E4A);
     final screenSize = MediaQuery.sizeOf(context);
     final screenWidth = screenSize.width;
     final appLocalizations = AppLocalizations.of(context)!;
