@@ -17,33 +17,38 @@ class _TripPlannerPageState extends State<TripPlannerPage>
   // Dummy data simulating the Jordan trip locations seen in the image
   final List<Map<String, dynamic>> _places = [
     {
-      "name": "Qahwa BLK - Sport City",
-      "type": "Cafe",
-      "image": "https://placehold.co/100x100/222/fff?text=BLK",
-      "time": "0 min",
+      "name": "Taj Mall",
+      "type": "Mall",
+      "image":
+          "https://www.tajlifestyle.com/sites/default/files/2024-01/tj20dsf0001.jpg",
+      "time": "15 min",
     },
     {
       "name": "Qahwa BLK - Abdali Boulevard",
       "type": "Cafe",
-      "image": "https://placehold.co/100x100/333/fff?text=BLK",
+      "image":
+          "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcSjZsYLmjWVk5cTPr9AMv28VZHkSVR-tWSByA&s",
       "time": "15 min",
     },
     {
       "name": "King Abdullah I Mosque",
       "type": "Religious Site",
-      "image": "https://placehold.co/100x100/2cb/fff?text=Mosque",
+      "image":
+          "https://lp-cms-production.imgix.net/2019-06/93c9c694863de93c0059615e45277b5b-king-abdullah-mosque.jpg?auto=format,compress&q=72&w=1095&h=821&fit=crop&crop=faces,edges",
       "time": "10 min",
     },
     {
       "name": "Temple of Hercules",
       "type": "Historical Site",
-      "image": "https://placehold.co/100x100/ec1/fff?text=Temple",
+      "image":
+          "https://universes.art/fileadmin/_processed_/f/3/csm_03-IMG_1194-A_3107892f32.jpg",
       "time": "20 min",
     },
     {
       "name": "Amman Citadel",
       "type": "Historical Landmark",
-      "image": "https://placehold.co/100x100/a31/fff?text=Citadel",
+      "image":
+          "https://www.luxorandaswan.com/images/159752872414325bdf24da8cb3d129a26d3a77ecba2-amman.jpg",
       "time": "5 min",
     },
   ];

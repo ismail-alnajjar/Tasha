@@ -36,7 +36,7 @@ class HiddenGemRepository {
         }
       }
 
-      await _apiService.postFormData('/CitizenFeatures/hidden-gems', formData);
+      await _apiService.postFormData('CitizenFeatures/hidden-gems', formData);
     } catch (e) {
       if (e is DioException && e.response != null) {
         throw Exception(e.response?.data.toString());
@@ -49,7 +49,7 @@ class HiddenGemRepository {
     try {
       final user = FirebaseAuth.instance.currentUser;
       final response = await _apiService.get(
-        '/CitizenFeatures/hidden-gems',
+        'CitizenFeatures/hidden-gems',
         queryParameters: {
           'firebaseUid': user?.uid ?? '',
         },

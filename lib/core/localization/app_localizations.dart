@@ -140,6 +140,7 @@ class AppLocalizations {
       'cat_mountain': 'جبل',
       'cat_city': 'مدينة',
       'cat_forest': 'غابة',
+      'cat_citizen': 'استضافة مواطن',
 
       // Tags
       'collaborative_choice': 'خيار تعاوني',

@@ -8,7 +8,7 @@ class CitizenCategoriesSection extends StatefulWidget {
   const CitizenCategoriesSection({
     super.key,
     required this.onCategorySelected,
-    this.initialCategory = 'Events',
+    this.initialCategory = 'Popular',
   });
 
   @override
@@ -20,9 +20,11 @@ class _CitizenCategoriesSectionState extends State<CitizenCategoriesSection> {
   late String _selectedCategory;
 
   final List<Map<String, dynamic>> _categories = [
+    {'icon': Icons.star_border_outlined, 'label': 'Popular'},
     {'icon': Icons.confirmation_number_outlined, 'label': 'Events'},
     {'icon': Icons.hiking, 'label': 'Activities'},
     {'icon': Icons.restaurant_menu, 'label': 'Dining'},
+    {'icon': Icons.shopping_bag_outlined, 'label': 'Shopping'},
     {'icon': Icons.palette_outlined, 'label': 'Workshops'},
   ];
 

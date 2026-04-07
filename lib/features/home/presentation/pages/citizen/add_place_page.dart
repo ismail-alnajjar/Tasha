@@ -4,6 +4,7 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:geolocator/geolocator.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:tashaapp/core/localization/app_localizations.dart';
+import 'package:tashaapp/core/services/location_service.dart';
 import 'package:tashaapp/features/home/cubit/hidden_gem_cubit.dart';
 import 'package:tashaapp/features/home/cubit/hidden_gem_state.dart';
 import 'package:tashaapp/features/home/data/models/hidden_gem_model.dart';
@@ -22,6 +23,7 @@ class _AddPlacePageState extends State<AddPlacePage> with SingleTickerProviderSt
   final TextEditingController _descriptionController = TextEditingController();
   List<File> _images = [];
   Position? _currentPosition;
+  bool _isLocating = false;
 
   @override
   void initState() {
@@ -31,6 +33,7 @@ class _AddPlacePageState extends State<AddPlacePage> with SingleTickerProviderSt
         context.read<HiddenGemCubit>().getMyHiddenGems();
       }
     });
+    _getCurrentLocation();
     super.initState();
   }
 
@@ -43,15 +46,13 @@ class _AddPlacePageState extends State<AddPlacePage> with SingleTickerProviderSt
   }
 
   Future<void> _getCurrentLocation() async {
-    try {
-      LocationPermission permission = await Geolocator.checkPermission();
-      if (permission == LocationPermission.denied) {
-        permission = await Geolocator.requestPermission();
-      }
-      final position = await Geolocator.getCurrentPosition();
-      setState(() => _currentPosition = position);
-    } catch (e) {
-      debugPrint("Error location: $e");
+    setState(() => _isLocating = true);
+    final pos = await LocationService.getCurrentLocation();
+    if (mounted) {
+      setState(() {
+        _currentPosition = pos;
+        _isLocating = false;
+      });
     }
   }
 
@@ -127,9 +128,10 @@ class _AddPlacePageState extends State<AddPlacePage> with SingleTickerProviderSt
           selectedImages: _images,
           onImagesChanged: (imgs) => setState(() => _images = imgs),
           supportMultipleImages: true,
-          submitButtonText: t(context, 'send'),
-          isLoading: state is HiddenGemLoading,
+          submitButtonText: _isLocating ? 'Getting location...' : t(context, 'send'),
+          isLoading: state is HiddenGemLoading || _isLocating,
           previewCard: _buildPreview(scale, isDark),
+          locationWidget: _buildLocationButton(isDark, theme),
           onSubmit: () {
             context.read<HiddenGemCubit>().sendHiddenGem(
                   name: _nameController.text,
@@ -141,6 +143,75 @@ class _AddPlacePageState extends State<AddPlacePage> with SingleTickerProviderSt
           },
         );
       },
+    );
+  }
+
+  Widget _buildLocationButton(bool isDark, ThemeData theme) {
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: [
+        Text(
+          'موقع المكان / Place Location',
+          style: GoogleFonts.cairo(
+            fontSize: 13,
+            fontWeight: FontWeight.w600,
+            color: isDark ? Colors.white70 : Colors.black54,
+          ),
+        ),
+        const SizedBox(height: 8),
+        InkWell(
+          onTap: _isLocating ? null : _getCurrentLocation,
+          borderRadius: BorderRadius.circular(16),
+          child: Container(
+            padding: const EdgeInsets.all(16),
+            decoration: BoxDecoration(
+              color: isDark ? Colors.white.withOpacity(0.05) : Colors.white,
+              borderRadius: BorderRadius.circular(16),
+              border: Border.all(
+                color: _currentPosition != null ? Colors.green : theme.primaryColor.withOpacity(0.2),
+                width: 1.5,
+              ),
+            ),
+            child: Row(
+              children: [
+                Icon(
+                  _currentPosition != null ? Icons.location_on : Icons.my_location,
+                  color: _currentPosition != null ? Colors.green : theme.primaryColor,
+                ),
+                const SizedBox(width: 12),
+                Expanded(
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      Text(
+                        _isLocating 
+                            ? 'جاري تحديد موقع المكان...' 
+                            : (_currentPosition != null ? 'تم تحديد موقع المكان بنجاح' : 'اضغط لتحديد موقع المكان حالياً'),
+                        style: GoogleFonts.cairo(
+                          fontSize: 14,
+                          fontWeight: FontWeight.bold,
+                          color: _currentPosition != null ? Colors.green : (isDark ? Colors.white : Colors.black87),
+                        ),
+                      ),
+                      if (_currentPosition != null)
+                        Text(
+                          'Lat: ${_currentPosition!.latitude.toStringAsFixed(4)}, Long: ${_currentPosition!.longitude.toStringAsFixed(4)}',
+                          style: const TextStyle(fontSize: 10, color: Colors.grey),
+                        ),
+                    ],
+                  ),
+                ),
+                if (_isLocating)
+                  const SizedBox(
+                    width: 20,
+                    height: 20,
+                    child: CircularProgressIndicator(strokeWidth: 2),
+                  ),
+              ],
+            ),
+          ),
+        ),
+      ],
     );
   }
 
@@ -159,6 +230,16 @@ class _AddPlacePageState extends State<AddPlacePage> with SingleTickerProviderSt
           const SizedBox(height: 4),
           Text(_descriptionController.text.isEmpty ? 'Description' : _descriptionController.text,
               style: GoogleFonts.plusJakartaSans(color: Colors.grey, fontSize: 12)),
+          if (_currentPosition != null) ...[
+            const SizedBox(height: 8),
+            Row(
+              children: [
+                const Icon(Icons.location_on, size: 12, color: Colors.green),
+                const SizedBox(width: 4),
+                Text('Location Captured', style: GoogleFonts.inter(fontSize: 10, color: Colors.green)),
+              ],
+            ),
+          ],
         ],
       ),
     );
@@ -231,7 +312,7 @@ class _AddPlacePageState extends State<AddPlacePage> with SingleTickerProviderSt
                 child: ListView.builder(
                   scrollDirection: Axis.horizontal,
                   itemCount: gem.photoUrls.length,
-                  itemBuilder: (context, i) => Image.network('http://192.168.1.27:5000${gem.photoUrls[i]}', width: 100),
+                  itemBuilder: (context, i) => Image.network('http://192.168.1.27:5010${gem.photoUrls[i]}', width: 100),
                 ),
               ),
             ],

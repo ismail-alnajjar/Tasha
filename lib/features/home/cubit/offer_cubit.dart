@@ -8,11 +8,14 @@ class OfferCubit extends Cubit<OfferState> {
   OfferCubit(this._repository) : super(OfferInitial());
 
   Future<void> fetchOffers() async {
+    if (isClosed) return;
     emit(OfferLoading());
     try {
       final offers = await _repository.getOffers();
+      if (isClosed) return;
       emit(OfferLoaded(offers));
     } catch (e) {
+      if (isClosed) return;
       emit(OfferError(e.toString()));
     }
   }

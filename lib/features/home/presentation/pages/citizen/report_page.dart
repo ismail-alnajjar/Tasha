@@ -4,6 +4,7 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:geolocator/geolocator.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:tashaapp/core/localization/app_localizations.dart';
+import 'package:tashaapp/core/services/location_service.dart';
 import 'package:tashaapp/features/home/cubit/report_cubit.dart';
 import 'package:tashaapp/features/home/cubit/report_state.dart';
 import 'package:tashaapp/features/home/data/models/report_model.dart';
@@ -33,6 +34,7 @@ class _ReportPageState extends State<ReportPage>
         context.read<ReportCubit>().getMyReports();
       }
     });
+    _getCurrentLocation(); // Fetch location automatically
     super.initState();
   }
 
@@ -46,17 +48,12 @@ class _ReportPageState extends State<ReportPage>
 
   Future<void> _getCurrentLocation() async {
     setState(() => _isLocating = true);
-    try {
-      LocationPermission permission = await Geolocator.checkPermission();
-      if (permission == LocationPermission.denied) {
-        permission = await Geolocator.requestPermission();
-      }
-      final position = await Geolocator.getCurrentPosition();
-      setState(() => _currentPosition = position);
-    } catch (e) {
-      debugPrint("Error location: $e");
-    } finally {
-      setState(() => _isLocating = false);
+    final pos = await LocationService.getCurrentLocation();
+    if (mounted) {
+      setState(() {
+        _currentPosition = pos;
+        _isLocating = false;
+      });
     }
   }
 
@@ -138,6 +135,7 @@ class _ReportPageState extends State<ReportPage>
           submitButtonText: t(context, 'send'),
           isLoading: state is ReportLoading,
           previewCard: _buildPreview(scale, isDark),
+          locationWidget: _buildLocationButton(isDark, theme),
           onSubmit: () {
             context.read<ReportCubit>().sendReport(
               title: _titleController.text,
@@ -149,6 +147,75 @@ class _ReportPageState extends State<ReportPage>
           },
         );
       },
+    );
+  }
+
+  Widget _buildLocationButton(bool isDark, ThemeData theme) {
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: [
+        Text(
+          'موقع المشكلة / Problem Location',
+          style: GoogleFonts.cairo(
+            fontSize: 13,
+            fontWeight: FontWeight.w600,
+            color: isDark ? Colors.white70 : Colors.black54,
+          ),
+        ),
+        const SizedBox(height: 8),
+        InkWell(
+          onTap: _isLocating ? null : _getCurrentLocation,
+          borderRadius: BorderRadius.circular(16),
+          child: Container(
+            padding: const EdgeInsets.all(16),
+            decoration: BoxDecoration(
+              color: isDark ? Colors.white.withOpacity(0.05) : Colors.white,
+              borderRadius: BorderRadius.circular(16),
+              border: Border.all(
+                color: _currentPosition != null ? Colors.green : theme.primaryColor.withOpacity(0.2),
+                width: 1.5,
+              ),
+            ),
+            child: Row(
+              children: [
+                Icon(
+                  _currentPosition != null ? Icons.location_on : Icons.my_location,
+                  color: _currentPosition != null ? Colors.green : theme.primaryColor,
+                ),
+                const SizedBox(width: 12),
+                Expanded(
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      Text(
+                        _isLocating 
+                            ? 'جاري تحديد الموقع...' 
+                            : (_currentPosition != null ? 'تم تحديد الموقع بنجاح' : 'اضغط لتحديد موقعك الحالي'),
+                        style: GoogleFonts.cairo(
+                          fontSize: 14,
+                          fontWeight: FontWeight.bold,
+                          color: _currentPosition != null ? Colors.green : (isDark ? Colors.white : Colors.black87),
+                        ),
+                      ),
+                      if (_currentPosition != null)
+                        Text(
+                          'Lat: ${_currentPosition!.latitude.toStringAsFixed(4)}, Long: ${_currentPosition!.longitude.toStringAsFixed(4)}',
+                          style: const TextStyle(fontSize: 10, color: Colors.grey),
+                        ),
+                    ],
+                  ),
+                ),
+                if (_isLocating)
+                  const SizedBox(
+                    width: 20,
+                    height: 20,
+                    child: CircularProgressIndicator(strokeWidth: 2),
+                  ),
+              ],
+            ),
+          ),
+        ),
+      ],
     );
   }
 
@@ -289,7 +356,7 @@ class _ReportPageState extends State<ReportPage>
                   scrollDirection: Axis.horizontal,
                   itemCount: report.photoUrls.length,
                   itemBuilder: (context, i) => Image.network(
-                    'http://192.168.1.27:5000${report.photoUrls[i]}',
+                    'http://192.168.1.27:5010${report.photoUrls[i]}',
                     width: 100,
                   ),
                 ),

@@ -1,16 +1,17 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:google_fonts/google_fonts.dart';
-import 'package:tashaapp/features/home/cubit/categories_state.dart';
+import 'package:tashaapp/features/home/cubit/tourist_cubit.dart';
+import 'package:tashaapp/features/home/cubit/tourist_state.dart';
+import 'package:tashaapp/features/home/data/models/place_model.dart';
 import '../../../../../core/widgets/custom_floating_nav_bar.dart';
 import '../../../../../core/widgets/destination_card.dart';
-import 'package:tashaapp/features/home/cubit/categories_cubit.dart';
 import '../../../../../core/localization/app_localizations.dart';
 import '../../../../auth/cubit/auth_cubit.dart';
 import '../../../../auth/cubit/auth_state.dart';
 import '../../../../../core/routes/app_routes.dart';
-
-import '../../widgets/home_loading_widget.dart';
+import '../../widgets/citizen/trip_reviews_sheet.dart';
+import 'visiting_citizen_page.dart';
 
 class TouristHomePage extends StatefulWidget {
   const TouristHomePage({super.key});
@@ -20,7 +21,12 @@ class TouristHomePage extends StatefulWidget {
 }
 
 class _TouristHomePageState extends State<TouristHomePage> {
-  String _selectedCategory = 'Popular';
+  String _selectedCategoryKey = 'popular';
+
+  @override
+  void initState() {
+    super.initState();
+  }
 
   void _handleBookPressed(BuildContext context) {
     final authState = context.read<AuthCubit>().state;
@@ -52,11 +58,278 @@ class _TouristHomePageState extends State<TouristHomePage> {
         ),
       );
     } else {
-      // Proceed with booking (Mock)
       ScaffoldMessenger.of(
         context,
       ).showSnackBar(const SnackBar(content: Text("Proceeding to booking...")));
     }
+  }
+
+  void _showPlaceDetailsBottomSheet(BuildContext context, PlaceModel place) {
+    final theme = Theme.of(context);
+    showModalBottomSheet(
+      context: context,
+      isScrollControlled: true,
+      backgroundColor: Colors.transparent,
+      builder: (context) => Container(
+        height: MediaQuery.of(context).size.height * 0.85,
+        decoration: BoxDecoration(
+          color: theme.scaffoldBackgroundColor,
+          borderRadius: const BorderRadius.vertical(top: Radius.circular(32)),
+        ),
+        child: Column(
+          children: [
+            Stack(
+              children: [
+                ClipRRect(
+                  borderRadius: const BorderRadius.vertical(
+                    top: Radius.circular(32),
+                  ),
+                  child: Image.network(
+                    place.imageUrl ?? "https://via.placeholder.com/400x250",
+                    height: 250,
+                    width: double.infinity,
+                    fit: BoxFit.cover,
+                    errorBuilder: (context, error, stackTrace) => Container(
+                      height: 250,
+                      color: Colors.grey[300],
+                      child: const Icon(Icons.image_not_supported, size: 50),
+                    ),
+                  ),
+                ),
+                Positioned(
+                  top: 16,
+                  right: 16,
+                  child: GestureDetector(
+                    onTap: () => Navigator.pop(context),
+                    child: Container(
+                      padding: const EdgeInsets.all(8),
+                      decoration: BoxDecoration(
+                        color: Colors.black.withOpacity(0.5),
+                        shape: BoxShape.circle,
+                      ),
+                      child: const Icon(
+                        Icons.close,
+                        color: Colors.white,
+                        size: 20,
+                      ),
+                    ),
+                  ),
+                ),
+              ],
+            ),
+            Expanded(
+              child: Padding(
+                padding: const EdgeInsets.all(24.0),
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    Row(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
+                        Expanded(
+                          child: Text(
+                            place.name,
+                            style: GoogleFonts.plusJakartaSans(
+                              fontSize: 24,
+                              fontWeight: FontWeight.w800,
+                              color: theme.colorScheme.secondary,
+                            ),
+                          ),
+                        ),
+                        Container(
+                          padding: const EdgeInsets.symmetric(
+                            horizontal: 12,
+                            vertical: 6,
+                          ),
+                          decoration: BoxDecoration(
+                            color: Colors.amber.withOpacity(0.1),
+                            borderRadius: BorderRadius.circular(12),
+                          ),
+                          child: Row(
+                            children: [
+                              const Icon(
+                                Icons.star,
+                                color: Colors.amber,
+                                size: 18,
+                              ),
+                              const SizedBox(width: 4),
+                              Text(
+                                place.rating.toString(),
+                                style: GoogleFonts.plusJakartaSans(
+                                  fontWeight: FontWeight.bold,
+                                  color: Colors.amber[800],
+                                ),
+                              ),
+                            ],
+                          ),
+                        ),
+                      ],
+                    ),
+                    const SizedBox(height: 8),
+                    Row(
+                      children: [
+                        Icon(
+                          Icons.location_on,
+                          color: theme.colorScheme.primary,
+                          size: 18,
+                        ),
+                        const SizedBox(width: 4),
+                        Text(
+                          place.location,
+                          style: GoogleFonts.plusJakartaSans(
+                            color: Colors.grey[600],
+                            fontSize: 14,
+                          ),
+                        ),
+                      ],
+                    ),
+                    const SizedBox(height: 24),
+                    Row(
+                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                      children: [
+                        Text(
+                          "About this place",
+                          style: GoogleFonts.plusJakartaSans(
+                            fontSize: 18,
+                            fontWeight: FontWeight.bold,
+                            color: theme.colorScheme.onSurface,
+                          ),
+                        ),
+                        TextButton.icon(
+                          onPressed: () {
+                            Navigator.pop(context);
+                            TripReviewsSheet.show(context, place.id);
+                          },
+                          icon: const Icon(
+                            Icons.rate_review_outlined,
+                            size: 18,
+                          ),
+                          label: const Text("See Reviews"),
+                          style: TextButton.styleFrom(
+                            foregroundColor: const Color(0xFFF97316),
+                          ),
+                        ),
+                      ],
+                    ),
+                    const SizedBox(height: 12),
+                    Expanded(
+                      child: SingleChildScrollView(
+                        child: Text(
+                          place.description.isEmpty
+                              ? "Experience the unique beauty of ${place.name}. A perfect destination for tourists seeking adventure and culture."
+                              : place.description,
+                          style: GoogleFonts.plusJakartaSans(
+                            color: Colors.grey[600],
+                            fontSize: 15,
+                            height: 1.6,
+                          ),
+                        ),
+                      ),
+                    ),
+                  ],
+                ),
+              ),
+            ),
+          ],
+        ),
+      ),
+    );
+  }
+
+  Widget _buildCitizenHostingBanner(
+    BuildContext context,
+    AppLocalizations appLocalizations,
+  ) {
+    final theme = Theme.of(context);
+
+    return GestureDetector(
+      onTap: () {
+        Navigator.push(
+          context,
+          MaterialPageRoute(builder: (context) => const VisitingCitizenPage()),
+        );
+      },
+      child: Container(
+        padding: const EdgeInsets.all(20),
+        decoration: BoxDecoration(
+          gradient: const LinearGradient(
+            colors: [Color(0xFFE75B04), Color(0xFFF97316)],
+            begin: Alignment.topLeft,
+            end: Alignment.bottomRight,
+          ),
+          borderRadius: BorderRadius.circular(24),
+          boxShadow: [
+            BoxShadow(
+              color: const Color(0xFFE75B04).withOpacity(0.3),
+              blurRadius: 15,
+              offset: const Offset(0, 8),
+            ),
+          ],
+        ),
+        child: Row(
+          children: [
+            Expanded(
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  Text(
+                    appLocalizations.translate('Visit a citizen'),
+                    style: GoogleFonts.plusJakartaSans(
+                      color: Colors.white,
+                      fontSize: 20,
+                      fontWeight: FontWeight.w800,
+                      letterSpacing: -0.5,
+                    ),
+                  ),
+                  const SizedBox(height: 6),
+                  Text(
+                    "Meet locals, share culture, and experience Jordan like a citizen.",
+                    style: GoogleFonts.plusJakartaSans(
+                      color: Colors.white.withOpacity(0.9),
+                      fontSize: 13,
+                      fontWeight: FontWeight.w500,
+                    ),
+                  ),
+                  const SizedBox(height: 16),
+                  Container(
+                    padding: const EdgeInsets.symmetric(
+                      horizontal: 14,
+                      vertical: 8,
+                    ),
+                    decoration: BoxDecoration(
+                      color: Colors.white,
+                      borderRadius: BorderRadius.circular(30),
+                    ),
+                    child: Text(
+                      "Explore Hosts",
+                      style: GoogleFonts.plusJakartaSans(
+                        color: const Color(0xFFE75B04),
+                        fontSize: 12,
+                        fontWeight: FontWeight.bold,
+                      ),
+                    ),
+                  ),
+                ],
+              ),
+            ),
+            const SizedBox(width: 16),
+            Container(
+              width: 80,
+              height: 80,
+              decoration: BoxDecoration(
+                color: Colors.white.withOpacity(0.2),
+                shape: BoxShape.circle,
+              ),
+              child: const Icon(
+                Icons.people_alt_rounded,
+                color: Colors.white,
+                size: 40,
+              ),
+            ),
+          ],
+        ),
+      ),
+    );
   }
 
   @override
@@ -65,131 +338,118 @@ class _TouristHomePageState extends State<TouristHomePage> {
     final theme = Theme.of(context);
 
     return BlocProvider(
-      create: (context) => CategoriesCubit()..loadCategories(),
+      create: (context) => TouristCubit()..fetchTouristPlaces('popular'),
       child: Scaffold(
         backgroundColor: theme.scaffoldBackgroundColor,
         body: Stack(
           children: [
-            BlocBuilder<CategoriesCubit, CategoriesState>(
-              builder: (context, state) {
-                if (state is CategoriesLoading || state is CategoriesInitial) {
-                  return const HomeLoadingWidget();
-                }
-                return Column(
-                  children: [
-                    // Status Bar Spacer
-                    Container(
-                      height: MediaQuery.of(context).padding.top + 8,
-                      color: theme.scaffoldBackgroundColor,
-                    ),
-                    // Main Content
-                    Expanded(
-                      child: SingleChildScrollView(
-                        padding: const EdgeInsets.fromLTRB(16, 0, 16, 100),
-                        child: Column(
-                          crossAxisAlignment: CrossAxisAlignment.start,
+            Column(
+              children: [
+                Container(
+                  height: MediaQuery.of(context).padding.top + 8,
+                  color: theme.scaffoldBackgroundColor,
+                ),
+                Expanded(
+                  child: SingleChildScrollView(
+                    padding: const EdgeInsets.fromLTRB(16, 0, 16, 100),
+                    child: Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
+                        _buildTopAppBar(context, appLocalizations),
+                        const SizedBox(height: 16),
+                        _buildSearchSection(context, appLocalizations),
+                        const SizedBox(height: 24),
+                        _buildCitizenHostingBanner(context, appLocalizations),
+                        const SizedBox(height: 24),
+                        _buildCategories(context, appLocalizations),
+                        const SizedBox(height: 24),
+                        Row(
+                          mainAxisAlignment: MainAxisAlignment.spaceBetween,
                           children: [
-                            // Top App Bar
-                            _buildTopAppBar(context, appLocalizations),
-                            const SizedBox(height: 16),
-
-                            // Hero Search Section
-                            _buildSearchSection(context, appLocalizations),
-                            const SizedBox(height: 16),
-
-                            // Categories
-                            _buildCategories(context, appLocalizations),
-                            const SizedBox(height: 24),
-
-                            // Section Header
-                            Row(
-                              mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                              children: [
-                                Text(
-                                  appLocalizations.translate(
-                                    'popular_destinations',
-                                  ),
-                                  style: GoogleFonts.plusJakartaSans(
-                                    color: theme.colorScheme.secondary,
-                                    fontSize: 20,
-                                    fontWeight: FontWeight.w800,
-                                    letterSpacing: -0.3,
-                                  ),
+                            Text(
+                              appLocalizations.translate(
+                                'popular_destinations',
+                              ),
+                              style: GoogleFonts.plusJakartaSans(
+                                color: theme.colorScheme.secondary,
+                                fontSize: 20,
+                                fontWeight: FontWeight.w800,
+                                letterSpacing: -0.3,
+                              ),
+                            ),
+                            TextButton(
+                              onPressed: () {},
+                              style: TextButton.styleFrom(
+                                padding: EdgeInsets.zero,
+                                minimumSize: Size.zero,
+                                tapTargetSize: MaterialTapTargetSize.shrinkWrap,
+                              ),
+                              child: Text(
+                                appLocalizations.translate('see_all'),
+                                style: GoogleFonts.plusJakartaSans(
+                                  color: theme.colorScheme.primary,
+                                  fontSize: 14,
+                                  fontWeight: FontWeight.bold,
                                 ),
-                                TextButton(
-                                  onPressed: () {},
-                                  style: TextButton.styleFrom(
-                                    padding: EdgeInsets.zero,
-                                    minimumSize: Size.zero,
-                                    tapTargetSize:
-                                        MaterialTapTargetSize.shrinkWrap,
-                                  ),
-                                  child: Text(
-                                    appLocalizations.translate('see_all'),
-                                    style: GoogleFonts.plusJakartaSans(
-                                      color: theme.colorScheme.primary,
-                                      fontSize: 14,
-                                      fontWeight: FontWeight.bold,
-                                    ),
-                                  ),
-                                ),
-                              ],
-                            ),
-                            const SizedBox(height: 16),
-
-                            // Destination Cards
-                            DestinationCard(
-                              title: "Maldives Private Villa",
-                              location: "Serene Luxury • North Atoll",
-                              price: "\$4,500",
-                              rating: 4.9,
-                              imageUrl:
-                                  "https://lh3.googleusercontent.com/aida-public/AB6AXuDtd6JBYZq9hD6z_KGzY_yEy-qbHuveKbeR15PNTgqv0QoiiYRlVrG4V0l3Lbh8E4fe4Q68n65ZSTbJZZh5PsSjA6hseW2Ma4nv3S-DJ3PbTDr_SMt-9m1EpUmpe91pXBzO9Fan2rYl1Z5prpD7nGQ76PGm-lzhmM732Q3spG81uhC2EmYSUbaUzsHxtfv9s4t_xVgfEKrBd9qrib8MstrmZAup0UQVXKlo6NtGFl7_rMfEWnOKAGpLb5VigUUsMebpNI7NAVxGK08",
-                              tag: appLocalizations.translate(
-                                'collaborative_choice',
                               ),
-                              tagName: appLocalizations.translate(
-                                'collaborative_choice',
-                              ),
-                              showAvatars: true,
-                              onBookPressed: () => _handleBookPressed(context),
-                            ),
-                            DestinationCard(
-                              title: "Aman Kyoto Sanctuary",
-                              location: "Zen Retreat • Kyoto, Japan",
-                              price: "\$2,800",
-                              rating: 5.0,
-                              imageUrl:
-                                  "https://lh3.googleusercontent.com/aida-public/AB6AXuC0iz6npFT9qjeUmekuw4ZhSvGTQihvlF7bdJJmS8RvreXU_8km78eAA1kZpvCubiJy7M32h4u_0QCAIyXI_1lpbvRCPpjnk6fvhPKCSKvZgfeSJZvKyUsAPp_l3b963Xgvsm3kbK7cVvdNfU6NxXynMcd9puxO5RZX9udrZ8LG4u9W_26rQ9Bf-Di5kWTSRdrBt1-GbhHBCDr232FR5BaxVVQPFzHmlt13SPPfi1hlBGksqoTIDyHWcdYSlrL_9deqRXwkkUPrpD8",
-                              tag: appLocalizations.translate('trending_now'),
-                              tagName: appLocalizations.translate(
-                                'cultural_immersion',
-                              ),
-                              isTrending: true,
-                              onBookPressed: () => _handleBookPressed(context),
-                            ),
-                            DestinationCard(
-                              title: "The Alpina Gstaad",
-                              location: "Mountain Bliss • Switzerland",
-                              price: "\$3,200",
-                              rating: 4.8,
-                              imageUrl:
-                                  "https://lh3.googleusercontent.com/aida-public/AB6AXuCxaxWhiU68gVjQCgshFsN-qKOc9V1CoQzN1XLOLX6CXlcXaLNeEHQkmkrccE3IgDCYuLNmVQn_vZEaSQbHxNbLzoK-B_v9ovzYvixFzySg_2ZuT6lcH8sB-mER26dbErTnFm17JTmKRkNeyWipDt3QTAkyABEi9CLD0WdUsdmzS7T9d3BOBJM5p-U1CNUzlEqtiyNNhS5Gqia8o8W4wk_xMeygsOgefN6SWHkS_fB94-7RiacIrsZd2PNGpRAOokDKlzqXXbPcUzU",
-                              tag: appLocalizations.translate('alpine_luxury'),
-                              tagName: appLocalizations.translate(
-                                'alpine_luxury',
-                              ),
-                              onBookPressed: () => _handleBookPressed(context),
                             ),
                           ],
                         ),
-                      ),
+                        const SizedBox(height: 16),
+                        BlocBuilder<TouristCubit, TouristState>(
+                          builder: (context, state) {
+                            if (state is TouristLoading) {
+                              return const Center(
+                                child: CircularProgressIndicator(),
+                              );
+                            } else if (state is TouristError) {
+                              return Center(
+                                child: Text('Error: ${state.message}'),
+                              );
+                            } else if (state is TouristLoaded) {
+                              if (state.places.isEmpty) {
+                                return const Center(
+                                  child: Text('No places found.'),
+                                );
+                              }
+                              return ListView.builder(
+                                shrinkWrap: true,
+                                physics: const NeverScrollableScrollPhysics(),
+                                itemCount: state.places.length,
+                                itemBuilder: (context, index) {
+                                  final place = state.places[index];
+                                  return GestureDetector(
+                                    onTap: () => _showPlaceDetailsBottomSheet(
+                                      context,
+                                      place,
+                                    ),
+                                    child: DestinationCard(
+                                      title: place.name,
+                                      location: place.location,
+                                      price: "View Details",
+                                      rating: place.rating,
+                                      imageUrl:
+                                          place.imageUrl ??
+                                          "https://via.placeholder.com/400x250",
+                                      tag: place.category,
+                                      tagName: place.category,
+                                      showAvatars: true,
+                                      onBookPressed: () =>
+                                          _handleBookPressed(context),
+                                    ),
+                                  );
+                                },
+                              );
+                            }
+                            return const SizedBox();
+                          },
+                        ),
+                      ],
                     ),
-                  ],
-                );
-              },
+                  ),
+                ),
+              ],
             ),
-            // Custom Navigation Bar
             const CustomFloatingNavBar(),
           ],
         ),
@@ -229,17 +489,6 @@ class _TouristHomePageState extends State<TouristHomePage> {
               ),
             ),
           ),
-          /*
-          // Optional: Keep generic title or nothing
-          Text(
-            "Explore",
-             style: GoogleFonts.plusJakartaSans(
-                color: theme.colorScheme.secondary,
-                fontSize: 20,
-                fontWeight: FontWeight.w800,
-             ),
-          ),
-          */
         ],
       );
     }
@@ -303,9 +552,19 @@ class _TouristHomePageState extends State<TouristHomePage> {
       decoration: BoxDecoration(
         color: theme.colorScheme.surface,
         borderRadius: BorderRadius.circular(16),
-        border: Border.all(color: theme.brightness == Brightness.dark ? Colors.white12 : Colors.black.withOpacity(0.05)),
+        border: Border.all(
+          color: theme.brightness == Brightness.dark
+              ? Colors.white12
+              : Colors.black.withOpacity(0.05),
+        ),
         boxShadow: [
-          BoxShadow(color: theme.brightness == Brightness.dark ? Colors.black38 : Colors.black12, blurRadius: 2, offset: const Offset(0, 1)),
+          BoxShadow(
+            color: theme.brightness == Brightness.dark
+                ? Colors.black38
+                : Colors.black12,
+            blurRadius: 2,
+            offset: const Offset(0, 1),
+          ),
         ],
       ),
       child: Row(
@@ -324,8 +583,6 @@ class _TouristHomePageState extends State<TouristHomePage> {
                   fontWeight: FontWeight.w500,
                 ),
                 border: InputBorder.none,
-                enabledBorder: InputBorder.none,
-                focusedBorder: InputBorder.none,
                 contentPadding: const EdgeInsets.symmetric(horizontal: 16),
               ),
               style: GoogleFonts.plusJakartaSans(
@@ -348,14 +605,14 @@ class _TouristHomePageState extends State<TouristHomePage> {
     BuildContext context,
     AppLocalizations appLocalizations,
   ) {
-    // Map category keys to icons
     final categories = [
-      {'icon': Icons.bolt, 'key': 'cat_popular'},
-      {'icon': Icons.museum, 'key': 'cat_museum'},
-      {'icon': Icons.forest, 'key': 'cat_nature'},
-      {'icon': Icons.restaurant, 'key': 'cat_foodie'},
-      {'icon': Icons.history_edu, 'key': 'cat_history'},
-      {'icon': Icons.shopping_bag, 'key': 'cat_shopping'},
+      {'icon': Icons.bolt, 'key': 'cat_popular', 'api': 'popular'},
+      {'icon': Icons.people_outline, 'key': 'cat_citizen', 'api': 'citizen'},
+      {'icon': Icons.museum, 'key': 'cat_museum', 'api': 'museums'},
+      {'icon': Icons.forest, 'key': 'cat_nature', 'api': 'nature'},
+      {'icon': Icons.restaurant, 'key': 'cat_foodie', 'api': 'food-drink'},
+      {'icon': Icons.history_edu, 'key': 'cat_history', 'api': 'history'},
+      {'icon': Icons.shopping_bag, 'key': 'cat_shopping', 'api': 'shopping'},
     ];
 
     final theme = Theme.of(context);
@@ -368,18 +625,27 @@ class _TouristHomePageState extends State<TouristHomePage> {
         separatorBuilder: (context, index) => const SizedBox(width: 12),
         itemBuilder: (context, index) {
           final cat = categories[index];
-          final String label = appLocalizations.translate(cat['key'] as String);
-
-          final isSelected =
-              _selectedCategory == label ||
-              (_selectedCategory == 'Popular' &&
-                  label == appLocalizations.translate('cat_popular'));
+          final String key = cat['key'] as String;
+          final String label = appLocalizations.translate(key);
+          final isSelected = _selectedCategoryKey == key;
 
           return GestureDetector(
             onTap: () {
+              if (key == 'cat_citizen') {
+                Navigator.push(
+                  context,
+                  MaterialPageRoute(
+                    builder: (context) => const VisitingCitizenPage(),
+                  ),
+                );
+                return;
+              }
               setState(() {
-                _selectedCategory = label;
+                _selectedCategoryKey = key;
               });
+              context.read<TouristCubit>().fetchTouristPlaces(
+                cat['api'] as String,
+              );
             },
             child: Container(
               padding: const EdgeInsets.symmetric(horizontal: 20),

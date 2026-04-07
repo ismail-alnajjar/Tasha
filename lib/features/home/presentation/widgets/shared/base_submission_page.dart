@@ -50,7 +50,10 @@ class BaseSubmissionPage extends StatefulWidget {
     this.supportMultipleImages = false,
     required this.selectedImages,
     required this.onImagesChanged,
+    this.locationWidget,
   });
+
+  final Widget? locationWidget;
 
   @override
   State<BaseSubmissionPage> createState() => _BaseSubmissionPageState();

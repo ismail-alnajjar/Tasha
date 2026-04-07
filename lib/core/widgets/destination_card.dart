@@ -11,6 +11,8 @@ class DestinationCard extends StatelessWidget {
   final String tagName;
   final bool isTrending;
   final bool showAvatars;
+  final String? priceDescription;
+  final VoidCallback? onBookPressed;
 
   const DestinationCard({
     super.key,
@@ -24,9 +26,8 @@ class DestinationCard extends StatelessWidget {
     this.isTrending = false,
     this.showAvatars = false,
     this.onBookPressed,
+    this.priceDescription = "/night",
   });
-
-  final VoidCallback? onBookPressed;
 
   @override
   Widget build(BuildContext context) {
@@ -253,7 +254,7 @@ class DestinationCard extends StatelessWidget {
                                   ),
                                 ),
                                 TextSpan(
-                                  text: " /night",
+                                  text: priceDescription != null ? " $priceDescription" : "",
                                   style: GoogleFonts.plusJakartaSans(
                                     color: Colors.grey[400],
                                     fontSize: 12,

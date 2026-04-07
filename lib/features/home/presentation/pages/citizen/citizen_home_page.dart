@@ -8,8 +8,9 @@ import '../../widgets/home_loading_widget.dart';
 import '../../widgets/citizen/citizen_header_section.dart';
 import '../../widgets/citizen/citizen_search_section.dart';
 import '../../widgets/citizen/citizen_categories_section.dart';
-import '../../widgets/citizen/citizen_hidden_gems_section.dart';
+import '../../widgets/citizen/citizen_places_list.dart';
 import '../../widgets/citizen/citizen_weekend_plans_section.dart';
+import '../../../cubit/places_cubit.dart';
 
 import 'explore_page.dart';
 import 'saved_page.dart';
@@ -26,6 +27,7 @@ class CitizenHomePage extends StatefulWidget {
 
 class _CitizenHomePageState extends State<CitizenHomePage> {
   int _selectedIndex = 0;
+  String _selectedCategory = 'Popular';
 
   late final List<Widget> _pages;
 
@@ -41,8 +43,11 @@ class _CitizenHomePageState extends State<CitizenHomePage> {
   }
 
   Widget _buildHomeContent() {
-    return BlocProvider(
-      create: (context) => CategoriesCubit()..loadCategories(),
+    return MultiBlocProvider(
+      providers: [
+        BlocProvider(create: (context) => CategoriesCubit()..loadCategories()),
+        BlocProvider(create: (context) => PlacesCubit()..fetchPlacesByCategory(_selectedCategory)),
+      ],
       child: BlocBuilder<CategoriesCubit, CategoriesState>(
         builder: (context, state) {
           if (state is CategoriesLoading || state is CategoriesInitial) {
@@ -79,12 +84,17 @@ class _CitizenHomePageState extends State<CitizenHomePage> {
                         const CitizenQuickActions(),
                         const SizedBox(height: 24),
                         CitizenCategoriesSection(
+                          initialCategory: _selectedCategory,
                           onCategorySelected: (category) {
-                            // TODO: Implement category filtering if needed
+                            setState(() {
+                              _selectedCategory = category;
+                            });
+                            // Fetch content for the selected category
+                            context.read<PlacesCubit>().fetchPlacesByCategory(category);
                           },
                         ),
                         const SizedBox(height: 32),
-                        const CitizenHiddenGemsSection(),
+                        CitizenPlacesList(selectedCategory: _selectedCategory),
                         const SizedBox(height: 32),
                         const CitizenWeekendPlansSection(),
                       ],

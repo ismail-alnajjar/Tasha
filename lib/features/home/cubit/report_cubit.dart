@@ -16,6 +16,7 @@ class ReportCubit extends Cubit<ReportState> {
     required double longitude,
     List<File>? photos,
   }) async {
+    if (isClosed) return;
     emit(ReportLoading());
     try {
       await _repository.sendReport(
@@ -25,18 +26,23 @@ class ReportCubit extends Cubit<ReportState> {
         longitude: longitude,
         photos: photos,
       );
+      if (isClosed) return;
       emit(ReportSuccess());
     } catch (e) {
+      if (isClosed) return;
       emit(ReportError(e.toString()));
     }
   }
 
   Future<void> getMyReports() async {
+    if (isClosed) return;
     emit(ReportLoading());
     try {
       final reports = await _repository.getMyReports();
+      if (isClosed) return;
       emit(MyReportsLoaded(reports));
     } catch (e) {
+      if (isClosed) return;
       emit(ReportError(e.toString()));
     }
   }

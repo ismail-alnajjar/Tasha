@@ -35,7 +35,7 @@ class ReportRepository {
         }
       }
 
-      await _apiService.postFormData('/CitizenFeatures/issue-reports', formData);
+      await _apiService.postFormData('CitizenFeatures/issue-reports', formData);
     } catch (e) {
       if (e is DioException && e.response != null) {
         throw Exception(e.response?.data.toString());
@@ -48,7 +48,7 @@ class ReportRepository {
     try {
       final user = FirebaseAuth.instance.currentUser;
       final response = await _apiService.get(
-        '/CitizenFeatures/issue-reports',
+        'CitizenFeatures/issue-reports',
         queryParameters: {
           'firebaseUid': user?.uid ?? '',
         },
